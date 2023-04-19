@@ -3,7 +3,8 @@ const UserSchema = new mongoose.Schema(
   {
     role: {
       type: String,
-      require: true,
+      enum : ['user','admin'],
+      default: 'user'
     },
     firstName: {
       type: String,
@@ -30,7 +31,7 @@ const UserSchema = new mongoose.Schema(
     },
     picturePath: {
       type: String,
-      default: "",
+      // default: "",
     },
   },
   { timestamps: true }

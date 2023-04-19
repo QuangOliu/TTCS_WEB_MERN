@@ -1,7 +1,6 @@
 const { json } = require("body-parser");
 const Product = require("../models/Product");
 const User = require("../models/User");
-const Category = require("../models/Category")
 
 // CREATE POST
 const createProduct = async (req, res) => {
@@ -31,7 +30,7 @@ const createProduct = async (req, res) => {
 const getProductById = async (req, res) => {
   try {
     const { productId } = req.params;
-    const product = await Product.find({ _id: productId });
+    const product = await Product.findOne({ _id: productId });
     res.status(200).json(product);
   } catch (error) {
     res.status(404).json({ message: err.message });

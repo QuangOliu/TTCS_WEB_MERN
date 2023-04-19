@@ -2,9 +2,12 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   mode: "light",
+  isCartOpen: false,
   user: null,
   token: null,
-  products: [],
+  cart: [],
+  // cart: [{id, count, price}]
+  items: [],
 };
 
 export const authSlice = createSlice({
@@ -14,6 +17,9 @@ export const authSlice = createSlice({
     setMode: (state) => {
       state.mode = state.mode === "light" ? "dark" : "light";
     },
+    setIsCartOpen: (state) => {
+      state.isCartOpen = state.isCartOpen === true ? false : true;
+    },
     setLogin: (state, action) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
@@ -22,25 +28,42 @@ export const authSlice = createSlice({
       state.user = null;
       state.token = null;
     },
-    setFriends: (state, action) => {
-      if (state.user) {
-        state.user.friends = action.payload.friends;
-      } else {
-        console.error("user friends non-existent :(");
+    setItems: (state, action) => {
+      state.items = action.payload;
+    },
+
+    addToCart: (state, action) => {
+      const existingCartItem = state.cart.find((cartItem) => cartItem._id === action.payload.item._id);
+      if (existingCartItem) {
+        const newCart = state.cart.map((cartItem) => (cartItem._id === action.payload.item._id ? { ...cartItem, count: cartItem.count + action.payload.item.count } : cartItem));
+        state.cart = [...newCart];
+        return;
       }
+      state.cart = [...state.cart, action.payload.item];
     },
-    setProducts: (state, action) => {
-      state.products = action.payload.products;
+    removeFromCart: (state, action) => {
+      state.cart = state.cart.filter((item) => item._id !== action.payload._id);
     },
-    setProduct: (state, action) => {
-      const updatedProducts = state.products.map((product) => {
-        if (product._id === action.payload.product._id) return action.payload.product;
-        return product;
+
+    increaseCount: (state, action) => {
+      state.cart = state.cart.map((item) => {
+        if (item._id === action.payload._id) {
+          item.count++;
+        }
+        return item;
       });
-      state.products = updatedProducts;
+    },
+
+    decreaseCount: (state, action) => {
+      state.cart = state.cart.map((item) => {
+        if (item._id === action.payload._id && item.count > 1) {
+          item.count--;
+        }
+        return item;
+      });
     },
   },
 });
 
-export const { setMode, setLogin, setLogout, setFriends, setProduct, setProducts } = authSlice.actions;
+export const { setMode, setLogin, setLogout, setItems, addToCart, removeFromCart, increaseCount, decreaseCount, setIsCartOpen } = authSlice.actions;
 export default authSlice.reducer;

@@ -64,30 +64,25 @@ export default function Form() {
       });
   };
   const register = async (values, onSubmitProps) => {
-    const newValue = {
-      ...values,
-      picturePath:  values.picture.name
-    }
-    console.log(newValue.picture)
-
     const formData = new FormData();
-    newValue["email"] = newValue["email"].toLowerCase().trim();
-    for (let value in newValue) {
-      formData.append(value, values[value]);
-    }
-    
-    authApi
-      .register(formData)
-      .then((response) => {
-        // Xử lý response thành công
-        setPageType("login");
+      for (let value in values) {
+        formData.append(value, values[value]);
+      }
+      formData.append("picturePath", values.picture.name);
 
-        setErrorMessage("");
-      })
-      .catch((error) => {
-        setErrorMessage(error.response.data.message);
-        setOpenLog(true);
-      });
+    const savedUserResponse = await fetch(
+      "http://localhost:4000/auth/register",
+      {
+        method: "POST",
+        body: formData,
+      }
+    );
+    const savedUser = await savedUserResponse.json();
+    onSubmitProps.resetForm();
+
+    if (savedUser) {
+      setPageType("login");
+    }
   };
 
   const handleFormSubmit = async (values, onSubmitProps) => {
@@ -205,7 +200,7 @@ export default function Form() {
                   "&:hover": { color: palette.primary.main },
                 }}
               >
-                {!isSubmitting && isLogin ? "LOGIN" : "REGISTER"}
+                {!isSubmitting && (isLogin ? "LOGIN" : "REGISTER")}
                 {isSubmitting && "Submitting..."}
               </Button>
               <Typography

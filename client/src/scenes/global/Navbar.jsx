@@ -1,16 +1,17 @@
-import { useState } from "react";
-import { Box, IconButton, InputBase, Typography, Select, MenuItem, FormControl, useTheme, useMediaQuery } from "@mui/material";
-import { Search, Message, DarkMode, LightMode, Notifications, Help, Menu, Close } from "@mui/icons-material";
-import { useDispatch, useSelector } from "react-redux";
-import { setMode, setLogout } from "state";
-import { useNavigate } from "react-router-dom";
+import { Close, DarkMode, LightMode, Menu, Search, ShoppingBagOutlined } from "@mui/icons-material";
+import { Badge, Box, FormControl, IconButton, InputBase, MenuItem, Select, Typography, useMediaQuery, useTheme } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { setIsCartOpen, setLogout, setMode } from "state";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state) => state.user);
+  const cart = useSelector((state) => state.cart);
   const isNonMobileScreens = useMediaQuery("(min-width: 1000px)");
 
   const theme = useTheme();
@@ -21,6 +22,7 @@ const Navbar = () => {
   const alt = theme.palette.background.alt;
 
   const fullName = `${user.firstName} ${user.lastName}`;
+  // const fullName = 'user';
 
   return (
     <FlexBetween padding='1rem 6%' backgroundColor={alt}>
@@ -29,7 +31,7 @@ const Navbar = () => {
           fontWeight='bold'
           fontSize='clamp(1rem, 2rem, 2.25rem)'
           color='primary'
-          onClick={() => navigate("/home")}
+          onClick={() => navigate("/")}
           sx={{
             "&:hover": {
               color: primaryLight,
@@ -53,9 +55,12 @@ const Navbar = () => {
       {isNonMobileScreens ? (
         <FlexBetween gap='2rem'>
           <IconButton onClick={() => dispatch(setMode())}>{theme.palette.mode === "dark" ? <DarkMode sx={{ fontSize: "25px" }} /> : <LightMode sx={{ color: dark, fontSize: "25px" }} />}</IconButton>
-          <Message  sx={{ fontSize: "25px" }} />
+          {/* <Message sx={{ fontSize: "25px" }} />
           <Notifications sx={{ fontSize: "25px" }} />
-          <Help sx={{ fontSize: "25px" }} />
+          <Help sx={{ fontSize: "25px" }} /> */}
+          <Badge badgeContent={cart.length} invisible={cart.length === 0} onClick={() => dispatch(setIsCartOpen({}))} sx={{ fontSize: "25px" }}>
+            <ShoppingBagOutlined />
+          </Badge>
           <FormControl variant='standard' value={fullName}>
             <Select
               value={fullName}
@@ -102,9 +107,12 @@ const Navbar = () => {
             <IconButton onClick={() => dispatch(setMode())} sx={{ fontSize: "25px" }}>
               {theme.palette.mode === "dark" ? <DarkMode sx={{ fontSize: "25px" }} /> : <LightMode sx={{ color: dark, fontSize: "25px" }} />}
             </IconButton>
-            <Message sx={{ fontSize: "25px" }} />
+            {/* <Message sx={{ fontSize: "25px" }} />
             <Notifications sx={{ fontSize: "25px" }} />
-            <Help sx={{ fontSize: "25px" }} />
+            <Help sx={{ fontSize: "25px" }} /> */}
+            <Badge badgeContent={cart.length} invisible={cart.length === 0} onClick={() => dispatch(setIsCartOpen({}))} sx={{ fontSize: "25px" }}>
+              <ShoppingBagOutlined />
+            </Badge>
             <FormControl variant='standard' value={fullName}>
               <Select
                 value={fullName}
@@ -126,11 +134,7 @@ const Navbar = () => {
                 <MenuItem value={fullName}>
                   <Typography>{fullName}</Typography>
                 </MenuItem>
-                <MenuItem
-                onClick={() => dispatch(setLogout())}
-                >
-                  Log Out
-                </MenuItem>
+                <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
               </Select>
             </FormControl>
           </FlexBetween>

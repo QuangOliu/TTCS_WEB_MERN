@@ -2,15 +2,20 @@ const mongoose = require("mongoose");
 
 const productSchema = mongoose.Schema(
   {
-    categoryId: {
+    category: {
       type: String,
-      required: true,
+      enum: ["newArrivals", "bestSellers", "topRated"],
+      default: "newArrivals",
     },
     name: {
       type: String,
       required: true,
     },
-    description: {
+    shortDescription: {
+      type: String,
+      required: true,
+    },
+    longDescription: {
       type: String,
       required: true,
     },

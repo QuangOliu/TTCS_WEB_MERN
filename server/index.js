@@ -1,4 +1,4 @@
-import { fileURLToPath } from "url";
+// const { fileURLToPath } = require("url");
 
 const express = require("express");
 const bodyParser = require("body-parser");
@@ -15,18 +15,17 @@ const productRoutes = require("./routes/productRoutes");
 const { register } = require("./controllers/authController");
 const { createProduct } = require("./controllers/productController");
 const { verifyToken } = require("./middleware/authMiddleware");
-
+const Product = require("./models/Product");
+const {products} = require('./data/index')
+// console.log(products)
 const app = express();
 dotenv.config();
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 // MIDLEWARE
 app.use(express.json());
 app.use(bodyParser.json({ limit: "30mb", extended: true }));
 app.use(bodyParser.urlencoded({ limit: "30mb", extended: true }));
-// app.use(morgan("common"));
+app.use(morgan("common"));
 app.use(helmet());
 app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 app.use(cors());
@@ -41,13 +40,8 @@ const storage = multer.diskStorage({
     cb(null, file.originalname);
   },
 });
-// const upload = multer({ storage });
+const upload = multer({ storage });
 
-const upload = multer({ dest: 'uploads/' })
-
-upload.on('error', function(err) {
-  console.log('Multer error:', err)
-})
 
 /* ROUTES WITH FILES */
 app.post("/auth/register", upload.single("picture"), register);
@@ -60,13 +54,13 @@ app.use("/product", productRoutes);
 
 // DATA BASE CONNECT
 mongoose
-  .connect(process.env.MONGO_URL)
-  // .connect("mongodb://localhost:27017/social-media")
+  // .connect(process.env.MONGO_URL)
+  .connect("mongodb://localhost:27017/social-media")
   .then(() => {
     app.listen(process.env.PORT, () => {
       console.log(`Example app listening on port ${process.env.PORT}`);
       // User.insertMany(users);
-      // Post.insertMany(posts);
+      // Product.insertMany(products);
     });
   })
   .catch((err) => {
