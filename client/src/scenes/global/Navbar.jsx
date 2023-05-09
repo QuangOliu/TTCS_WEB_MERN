@@ -1,5 +1,8 @@
 import { Close, DarkMode, LightMode, Menu, Search, ShoppingBagOutlined } from "@mui/icons-material";
-import { Badge, Box, FormControl, IconButton, InputBase, MenuItem, Select, Typography, useMediaQuery, useTheme } from "@mui/material";
+import CardMembershipIcon from "@mui/icons-material/CardMembership";
+import LoginIcon from "@mui/icons-material/Login";
+import PrecisionManufacturingIcon from "@mui/icons-material/PrecisionManufacturing";
+import { Badge, Box, FormControl, IconButton, InputBase, MenuItem, Select, Tooltip, Typography, useMediaQuery, useTheme } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
@@ -21,7 +24,7 @@ const Navbar = () => {
   const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
 
-  const fullName = `${user.firstName} ${user.lastName}`;
+  const fullName = `${user?.firstName} ${user?.lastName}`;
   // const fullName = 'user';
 
   return (
@@ -53,66 +56,37 @@ const Navbar = () => {
 
       {/* DESKTOP NAV */}
       {isNonMobileScreens ? (
-        <FlexBetween gap='2rem'>
-          <IconButton onClick={() => dispatch(setMode())}>{theme.palette.mode === "dark" ? <DarkMode sx={{ fontSize: "25px" }} /> : <LightMode sx={{ color: dark, fontSize: "25px" }} />}</IconButton>
-          {/* <Message sx={{ fontSize: "25px" }} />
-          <Notifications sx={{ fontSize: "25px" }} />
-          <Help sx={{ fontSize: "25px" }} /> */}
-          <Badge badgeContent={cart.length} invisible={cart.length === 0} onClick={() => dispatch(setIsCartOpen({}))} sx={{ fontSize: "25px" }}>
-            <ShoppingBagOutlined />
-          </Badge>
-          <FormControl variant='standard' value={fullName}>
-            <Select
-              value={fullName}
-              sx={{
-                backgroundColor: neutralLight,
-                width: "150px",
-                borderRadius: "0.25rem",
-                p: "0.25rem 1rem",
-                "& .MuiSvgIcon-root": {
-                  pr: "0.25rem",
-                  width: "3rem",
-                },
-                "& .MuiSelect-select:focus": {
-                  backgroundColor: neutralLight,
-                },
-              }}
-              input={<InputBase />}
-            >
-              <MenuItem value={fullName}>
-                <Typography>{fullName}</Typography>
-              </MenuItem>
-              <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
-            </Select>
-          </FormControl>
-        </FlexBetween>
-      ) : (
-        <IconButton onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}>
-          <Menu />
-        </IconButton>
-      )}
+        user ? (
+          <FlexBetween gap={"20px"}>
+            <FlexBetween gap={"20px"}>
+              <Tooltip title={theme.palette.mode === "dark" ? "Dart mode" : "Light Mode"}>
+                <IconButton onClick={() => dispatch(setMode())}>
+                  {theme.palette.mode === "dark" ? <DarkMode sx={{ fontSize: "25px" }} /> : <LightMode sx={{ color: dark, fontSize: "25px" }} />}
+                </IconButton>
+              </Tooltip>
+              <Tooltip title={"Bag"}>
+                <IconButton onClick={() => dispatch(setIsCartOpen({}))}>
+                  <Badge badgeContent={cart.length} invisible={cart.length === 0} sx={{ fontSize: "25px" }}>
+                    <ShoppingBagOutlined />
+                  </Badge>
+                </IconButton>
+              </Tooltip>
 
-      {/* MOBILE NAV */}
-      {!isNonMobileScreens && isMobileMenuToggled && (
-        <Box position='fixed' right='0' bottom='0' height='100%' zIndex='10' maxWidth='500px' minWidth='300px' backgroundColor={background}>
-          {/* CLOSE ICON */}
-          <Box display='flex' justifyContent='flex-end' p='1rem'>
-            <IconButton onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}>
-              <Close />
-            </IconButton>
-          </Box>
-
-          {/* MENU ITEMS */}
-          <FlexBetween display='flex' flexDirection='column' justifyContent='center' alignItems='center' gap='3rem'>
-            <IconButton onClick={() => dispatch(setMode())} sx={{ fontSize: "25px" }}>
-              {theme.palette.mode === "dark" ? <DarkMode sx={{ fontSize: "25px" }} /> : <LightMode sx={{ color: dark, fontSize: "25px" }} />}
-            </IconButton>
-            {/* <Message sx={{ fontSize: "25px" }} />
-            <Notifications sx={{ fontSize: "25px" }} />
-            <Help sx={{ fontSize: "25px" }} /> */}
-            <Badge badgeContent={cart.length} invisible={cart.length === 0} onClick={() => dispatch(setIsCartOpen({}))} sx={{ fontSize: "25px" }}>
-              <ShoppingBagOutlined />
-            </Badge>
+              {user?.role === "admin" && (
+                <FlexBetween gap={"20px"}>
+                  <Tooltip title={"Manage Order"}>
+                    <IconButton onClick={() => navigate("/manage/order")}>
+                      <CardMembershipIcon />
+                    </IconButton>
+                  </Tooltip>
+                  <Tooltip title={"Manage Products"}>
+                    <IconButton onClick={() => navigate("/manage/product")}>
+                      <PrecisionManufacturingIcon />
+                    </IconButton>
+                  </Tooltip>
+                </FlexBetween>
+              )}
+            </FlexBetween>
             <FormControl variant='standard' value={fullName}>
               <Select
                 value={fullName}
@@ -138,6 +112,109 @@ const Navbar = () => {
               </Select>
             </FormControl>
           </FlexBetween>
+        ) : (
+          <FlexBetween gap='2rem'>
+            <IconButton onClick={() => dispatch(setMode())}>{theme.palette.mode === "dark" ? <DarkMode sx={{ fontSize: "25px" }} /> : <LightMode sx={{ color: dark, fontSize: "25px" }} />}</IconButton>
+            <FormControl variant='standard' value={fullName}>
+              <MenuItem onClick={() => navigate("/login")}>
+                Log In <LoginIcon sx={{ fontSize: "25px", ml: "4px" }} />
+              </MenuItem>
+            </FormControl>
+          </FlexBetween>
+        )
+      ) : (
+        <IconButton onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)}>
+          <Menu />
+        </IconButton>
+      )}
+
+      {/* MOBILE NAV */}
+      {!isNonMobileScreens && isMobileMenuToggled && (
+        <Box position='fixed' right='0' bottom='0' height='100%' zIndex='10' maxWidth='500px' minWidth='300px' backgroundColor={background}>
+          {/* CLOSE ICON */}
+          <MenuItem onClick={() => setIsMobileMenuToggled(!isMobileMenuToggled)} sx={{ display: "flex", justifyContent: "flex-end", p: "1rem" }}>
+            <Close />
+          </MenuItem>
+
+          {/* MENU ITEMS */}
+          {user ? (
+            <FlexBetween width={"100%"} flexDirection='column' alignItems='center' gap={"20px"}>
+              <FlexBetween display='flex' width={"100%"} flexDirection='column' alignItems='center' justifyContent={"center"} gap={"20px"}>
+                <MenuItem onClick={() => dispatch(setMode())} sx={{ width: "100%", display: "flex", justifyContent: "start" }}>
+                  {theme.palette.mode === "dark" ? <DarkMode sx={{ fontSize: "25px" }} /> : <LightMode sx={{ color: dark, fontSize: "25px" }} />}
+                  <Typography sx={{ ml: "14px" }}> {theme.palette.mode === "dark" ? "Dart Mode" : "Light Mode"}</Typography>
+                </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    setIsMobileMenuToggled(!isMobileMenuToggled);
+                    dispatch(setIsCartOpen({}));
+                  }}
+                  sx={{ width: "100%", display: "flex", justifyContent: "start" }}
+                >
+                  <Badge badgeContent={cart.length} invisible={cart.length === 0}>
+                    <ShoppingBagOutlined sx={{ fontSize: "25px" }} />
+                  </Badge>
+                  <Typography sx={{ ml: "14px" }}>Badge</Typography>
+                </MenuItem>
+
+                {user?.role === "admin" && (
+                  <Box width={"100%"} display='flex' flexDirection='column' alignItems='center' justifyContent={"start"} gap={"20px"}>
+                    <MenuItem
+                      onClick={() => {
+                        setIsMobileMenuToggled(!isMobileMenuToggled);
+                        navigate("/manage/order");
+                      }}
+                      sx={{ width: "100%", display: "flex", justifyContent: "start" }}
+                    >
+                      <CardMembershipIcon sx={{ fontSize: "25px" }} />
+                      <Typography sx={{ ml: "14px" }}>Manage Order</Typography>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        setIsMobileMenuToggled(!isMobileMenuToggled);
+                        navigate("/manage/product");
+                      }}
+                      sx={{ width: "100%", display: "flex", justifyContent: "start" }}
+                    >
+                      <PrecisionManufacturingIcon sx={{ fontSize: "25px" }} />
+                      <Typography sx={{ ml: "14px" }}>Manage Product</Typography>
+                    </MenuItem>
+                  </Box>
+                )}
+              </FlexBetween>
+              <FormControl variant='standard' value={fullName}>
+                <Select
+                  value={fullName}
+                  sx={{
+                    backgroundColor: neutralLight,
+                    width: "150px",
+                    borderRadius: "0.25rem",
+                    p: "0.25rem 1rem",
+                    "& .MuiSvgIcon-root": {
+                      pr: "0.25rem",
+                      width: "3rem",
+                    },
+                    "& .MuiSelect-select:focus": {
+                      backgroundColor: neutralLight,
+                    },
+                  }}
+                  input={<InputBase />}
+                >
+                  <MenuItem value={fullName}>
+                    <Typography>{fullName}</Typography>
+                  </MenuItem>
+                  <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
+                </Select>
+              </FormControl>
+            </FlexBetween>
+          ) : (
+            <FlexBetween display='flex' flexDirection='column' justifyContent='start' alignItems='center' gap='3rem'>
+              <IconButton onClick={() => dispatch(setMode())} sx={{ fontSize: "25px" }}>
+                {theme.palette.mode === "dark" ? <DarkMode sx={{ fontSize: "25px" }} /> : <LightMode sx={{ color: dark, fontSize: "25px" }} />}
+              </IconButton>
+              <Typography sx={{ ml: "14px" }}> {theme.palette.mode === "dark" ? "Dart Mode" : "Light Mode"}</Typography>
+            </FlexBetween>
+          )}
         </Box>
       )}
     </FlexBetween>

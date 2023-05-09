@@ -4,7 +4,7 @@ const productSchema = mongoose.Schema(
   {
     category: {
       type: String,
-      enum: ["newArrivals", "bestSellers", "topRated"],
+      // enum: ["newArrivals", "bestSellers", "topRated"],
       default: "newArrivals",
     },
     name: {
@@ -19,13 +19,17 @@ const productSchema = mongoose.Schema(
       type: String,
       required: true,
     },
-    imagePath: {
-      type: String,
+    quantity: {
+      type: Number,
       require: true,
     },
     price: {
       type: Number,
       required: true,
+    },
+    sales:{
+      type: Number,
+      default: 0
     },
     images: {
       type: Array,

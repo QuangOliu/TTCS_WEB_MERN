@@ -12,12 +12,14 @@ const path = require("path");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const productRoutes = require("./routes/productRoutes");
+const categoryRoute = require("./routes/categoryRoute");
+const orderRoute = require("./routes/orderRoute");
 const { register } = require("./controllers/authController");
 const { createProduct } = require("./controllers/productController");
-const { verifyToken } = require("./middleware/authMiddleware");
+const { verifyToken, checkAdmin } = require("./middleware/authMiddleware");
 const Product = require("./models/Product");
-const {products} = require('./data/index')
-// console.log(products)
+const { products } = require("./data/index");
+const Category = require("./models/Category");
 const app = express();
 dotenv.config();
 
@@ -42,16 +44,21 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-
 /* ROUTES WITH FILES */
 app.post("/auth/register", upload.single("picture"), register);
-app.post("/product", verifyToken, upload.array("product_image", 12), createProduct);
+// app.post(
+//   "/product",
+//   upload.array("picture", 12),
+//   createProduct
+// );
+app.post("/product", upload.array("productImages", 12), createProduct);
 
 // ROUTES
 app.use("/auth", authRoutes);
+app.use("/category", categoryRoute);
 app.use("/user", userRoutes);
 app.use("/product", productRoutes);
-
+app.use("/order", orderRoute);
 // DATA BASE CONNECT
 mongoose
   // .connect(process.env.MONGO_URL)

@@ -1,194 +1,214 @@
-import { useSelector } from "react-redux";
-import { Box, Button, Stepper, Step, StepLabel } from "@mui/material";
+import { useTheme } from "@emotion/react";
+import { Box, Button, CircularProgress, Divider, Step, StepLabel, Stepper, TextField, Typography } from "@mui/material";
+import orderApi from "api/orderApi";
+import FlexBetween from "components/FlexBetween";
 import { Formik } from "formik";
 import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import Aleart from "scenes/global/Aleart";
+import { setCheckOut } from "state";
 import * as yup from "yup";
 import { shades } from "../../theme";
-import Payment from "./Payment";
-import Shipping from "./Shipping";
 
 const Checkout = () => {
-  const [activeStep, setActiveStep] = useState(0);
+  const dispatch = useDispatch();
   const cart = useSelector((state) => state.cart);
-  const isFirstStep = activeStep === 0;
-  const isSecondStep = activeStep === 1;
+  const user = useSelector((state) => state.user);
 
-  const handleFormSubmit = async (values, actions) => {
-    setActiveStep(activeStep + 1);
+  const [open, setOpen] = useState(false);
+  const [loadding, setLoadding] = useState(false);
 
-    if (isSecondStep) {
-      makePayment(values);
+  const { palette } = useTheme();
+
+  const navigate = useNavigate();
+  const handleFormSubmit = async (values, onSubmitProps) => {
+    if (cart.length) {
+      values["items"] = cart;
+      values["userId"] = user._id;
+      const formData = JSON.stringify(values);
+
+      orderApi
+        .addOrder(formData)
+        .then((response) => {
+          setOpen(true);
+          setLoadding(true);
+          onSubmitProps.resetForm();
+          setTimeout(() => {
+            setLoadding(false);
+            dispatch(setCheckOut());
+            navigate("/");
+          }, 750);
+        })
+        .catch((error) => {
+          console.log(error);
+        });
+    } else {
+      console.log("Ban phan them san pham");
     }
-
-    actions.setTouched({});
   };
 
-  async function makePayment(values) {
-  }
+  const totalPrice = cart.reduce((total, item) => {
+    return total + item.count * item.price;
+  }, 0);
+
+  const initialValues = {
+    items: [],
+    userId: "",
+    name: "",
+    address: "",
+    phoneNumber: "",
+  };
+
+  const checkoutSchema = yup.object().shape({
+    name: yup.string().required("Name is required"),
+    address: yup.string().required("Address is required"),
+    phoneNumber: yup.string().required("Phone Number is required"),
+  });
 
   return (
-    <Box width="80%" m="100px auto">
-      <Stepper activeStep={activeStep} sx={{ m: "20px 0" }}>
-        <Step>
-          <StepLabel>Billing</StepLabel>
-        </Step>
-        <Step>
-          <StepLabel>Payment</StepLabel>
-        </Step>
-      </Stepper>
-      <Box>
-        <Formik
-          onSubmit={handleFormSubmit}
-          initialValues={initialValues}
-          validationSchema={checkoutSchema[activeStep]}
-        >
-          {({
-            values,
-            errors,
-            touched,
-            handleBlur,
-            handleChange,
-            handleSubmit,
-            setFieldValue,
-          }) => (
-            <form onSubmit={handleSubmit}>
-              {isFirstStep && (
-                <Shipping
-                  values={values}
-                  errors={errors}
-                  touched={touched}
-                  handleBlur={handleBlur}
-                  handleChange={handleChange}
-                  setFieldValue={setFieldValue}
-                />
-              )}
-              {isSecondStep && (
-                <Payment
-                  values={values}
-                  errors={errors}
-                  touched={touched}
-                  handleBlur={handleBlur}
-                  handleChange={handleChange}
-                  setFieldValue={setFieldValue}
-                />
-              )}
-              <Box display="flex" justifyContent="space-between" gap="50px">
-                {!isFirstStep && (
-                  <Button
-                    fullWidth
-                    color="primary"
-                    variant="contained"
-                    sx={{
-                      backgroundColor: shades.primary[200],
-                      boxShadow: "none",
-                      color: "white",
-                      borderRadius: 0,
-                      padding: "15px 40px",
-                    }}
-                    onClick={() => setActiveStep(activeStep - 1)}
-                  >
-                    Back
-                  </Button>
+    <Box>
+      <Aleart title={"Success"} messsage={"You have successfully made an Order — Congrats on Making your Purchase"} open={open} setOpen={setOpen} />
+      {loadding === false ? (
+        cart.length > 0 ? (
+          <Box width='80%' m='100px auto'>
+            <Box>
+              {cart.map((item) => {
+                return (
+                  <Box key={`${item._id}`}>
+                    <FlexBetween p='15px 0'>
+                      <Box flex='1 1 40%'>
+                        <img alt={item?.name} width='123px' height='164px' src={`http://localhost:4000/assets/${item.images[0]}`} />
+                      </Box>
+                      <Box flex='1 1 60%'>
+                        <FlexBetween mb='5px'>
+                          <Typography fontWeight='bold'>{item.name}</Typography>
+                        </FlexBetween>
+                        <Typography>{item.shortDescription}</Typography>
+                        <FlexBetween m='15px 0'>
+                          <Box display='flex' alignItems='center'>
+                            <Typography>Quantity: {item.count}</Typography>
+                          </Box>
+                          <Typography fontWeight='bold'>${item.price}</Typography>
+                        </FlexBetween>
+                      </Box>
+                    </FlexBetween>
+                    <Divider />
+                  </Box>
+                );
+              })}
+
+              <FlexBetween m='20px 0'>
+                <Typography fontWeight='bold'>SUBTOTAL</Typography>
+                <Typography fontWeight='bold'>{totalPrice} VND</Typography>
+              </FlexBetween>
+            </Box>
+            <Stepper activeStep={1} sx={{ m: "20px 0" }}>
+              <Step>
+                <StepLabel>Billing</StepLabel>
+              </Step>
+              <Step>
+                <StepLabel>Payment</StepLabel>
+              </Step>
+            </Stepper>
+            <Box>
+              <Formik onSubmit={handleFormSubmit} initialValues={initialValues} validationSchema={checkoutSchema}>
+                {({ values, errors, touched, handleBlur, handleChange, handleSubmit, setFieldValue }) => (
+                  <form onSubmit={handleSubmit}>
+                    <Box m='30px 0'>
+                      {/* CONTACT INFO */}
+                      <Box>
+                        <Typography sx={{ mb: "15px" }} fontSize='18px'></Typography>
+                        <TextField
+                          fullWidth
+                          type='text'
+                          label='Phone Number'
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          value={values.phoneNumber}
+                          name='phoneNumber'
+                          error={!!touched.phoneNumber && !!errors.phoneNumber}
+                          helperText={touched.phoneNumber && errors.phoneNumber}
+                          sx={{ gridColumn: "span 4", mb: "10px" }}
+                        />
+                        <TextField
+                          fullWidth
+                          type='text'
+                          label='Name'
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          value={values.name}
+                          name='name'
+                          error={!!touched.name && !!errors.name}
+                          helperText={touched.name && errors.name}
+                          sx={{ gridColumn: "span 4", mb: "10px" }}
+                        />
+                        <TextField
+                          fullWidth
+                          type='text'
+                          label='Address'
+                          onBlur={handleBlur}
+                          onChange={handleChange}
+                          value={values.address}
+                          name='address'
+                          error={!!touched.address && !!errors.address}
+                          helperText={touched.address && errors.address}
+                          sx={{ gridColumn: "span 4", mb: "10px" }}
+                        />
+                      </Box>
+                    </Box>
+                    <Box display='flex' justifyContent='space-between' gap='50px'>
+                      <Button
+                        fullWidth
+                        type='submit'
+                        color='primary'
+                        variant='contained'
+                        sx={{
+                          backgroundColor: shades.primary[400],
+                          boxShadow: "none",
+                          color: "white",
+                          borderRadius: 0,
+                          padding: "15px 40px",
+                        }}
+                      >
+                        Place Order
+                      </Button>
+                    </Box>
+                  </form>
                 )}
-                <Button
-                  fullWidth
-                  type="submit"
-                  color="primary"
-                  variant="contained"
-                  sx={{
-                    backgroundColor: shades.primary[400],
-                    boxShadow: "none",
-                    color: "white",
-                    borderRadius: 0,
-                    padding: "15px 40px",
-                  }}
-                >
-                  {!isSecondStep ? "Next" : "Place Order"}
-                </Button>
-              </Box>
-            </form>
-          )}
-        </Formik>
-      </Box>
+              </Formik>
+            </Box>
+          </Box>
+        ) : (
+          <Box width='80%' m='100px auto'>
+            <Typography fontWeight='500' variant='h5' sx={{ mb: "1.5rem" }}>
+              Bạn chưa có sản phẩm nào trong cửa hàng <br />
+              Hãy cùng trải nghiệm những sản phẩm của chúng tôi
+            </Typography>
+            <Button
+              fullWidth
+              sx={{
+                m: "2rem 0",
+                p: "1rem",
+                backgroundColor: palette.primary.main,
+                color: palette.background.alt,
+                "&:hover": { color: palette.primary.main },
+              }}
+              onClick={() => {
+                navigate("/");
+              }}
+            >
+              Thêm sản phẩm ngay
+            </Button>
+          </Box>
+        )
+      ) : (
+        <Box width='80%' m='100px auto' sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+          <CircularProgress color='inherit' />
+        </Box>
+      )}
     </Box>
   );
 };
-
-const initialValues = {
-  billingAddress: {
-    firstName: "",
-    lastName: "",
-    country: "",
-    street1: "",
-    street2: "",
-    city: "",
-    state: "",
-    zipCode: "",
-  },
-  shippingAddress: {
-    isSameAddress: true,
-    firstName: "",
-    lastName: "",
-    country: "",
-    street1: "",
-    street2: "",
-    city: "",
-    state: "",
-    zipCode: "",
-  },
-  email: "",
-  phoneNumber: "",
-};
-
-const checkoutSchema = [
-  yup.object().shape({
-    billingAddress: yup.object().shape({
-      firstName: yup.string().required("required"),
-      lastName: yup.string().required("required"),
-      country: yup.string().required("required"),
-      street1: yup.string().required("required"),
-      street2: yup.string(),
-      city: yup.string().required("required"),
-      state: yup.string().required("required"),
-      zipCode: yup.string().required("required"),
-    }),
-    shippingAddress: yup.object().shape({
-      isSameAddress: yup.boolean(),
-      firstName: yup.string().when("isSameAddress", {
-        is: false,
-        then: yup.string().required("required"),
-      }),
-      lastName: yup.string().when("isSameAddress", {
-        is: false,
-        then: yup.string().required("required"),
-      }),
-      country: yup.string().when("isSameAddress", {
-        is: false,
-        then: yup.string().required("required"),
-      }),
-      street1: yup.string().when("isSameAddress", {
-        is: false,
-        then: yup.string().required("required"),
-      }),
-      street2: yup.string(),
-      city: yup.string().when("isSameAddress", {
-        is: false,
-        then: yup.string().required("required"),
-      }),
-      state: yup.string().when("isSameAddress", {
-        is: false,
-        then: yup.string().required("required"),
-      }),
-      zipCode: yup.string().when("isSameAddress", {
-        is: false,
-        then: yup.string().required("required"),
-      }),
-    }),
-  }),
-  yup.object().shape({
-    email: yup.string().required("required"),
-    phoneNumber: yup.string().required("required"),
-  }),
-];
 
 export default Checkout;

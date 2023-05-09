@@ -12,6 +12,27 @@ const getUser = async (req, res) => {
   }
 };
 
+const updateCart = async (req, res) => {
+  try {
+    const { _id } = req.user;
+    const user = await User.findByIdAndUpdate(_id, { cart: [...req.body.cart] })
+      .then((result) => {
+        res.status(200).json({
+          status: "ok",
+          message: "Update Sucess",
+          data: result,
+        });
+      })
+      .catch((err) => {
+        res.status(200).json({
+          status: "false",
+          message: "Update fails",
+          data: "",
+        });
+      });
+  } catch (error) {}
+};
+
 //GET ALL USER
 const getAllUser = async (req, res) => {
   try {
@@ -25,4 +46,5 @@ const getAllUser = async (req, res) => {
 module.exports = {
   getUser,
   getAllUser,
+  updateCart,
 };

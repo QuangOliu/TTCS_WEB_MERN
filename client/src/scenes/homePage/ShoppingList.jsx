@@ -3,25 +3,23 @@ import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useEffect, useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 import Item from "../../components/Item";
-import productApi from "api/productApi";
-import { setItems } from "state";
 
 const ShoppingList = () => {
   const [value, setValue] = useState("all");
   const items = useSelector((state) => state.items);
   const breakPoint = useMediaQuery("(min-width: 1000px)");
 
-  const dispatch = useDispatch();
+  // const dispatch = useDispatch();
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
-  const topRatedItems = items.filter((item) => item.category === "topRated");
+  const topRatedItems = items.filter((item) => item.category === "spring");
   const newArrivalsItems = items.filter((item) => item.category === "newArrivals");
-  const bestSellersItems = items.filter((item) => item.category === "bestSellers");
+  const bestSellersItems = items.filter((item) => item.category === "fall");
 
   return (
     <Box width='80%' margin='80px auto'>
@@ -44,8 +42,8 @@ const ShoppingList = () => {
       >
         <Tab label='ALL' value='all' />
         <Tab label='NEW ARRIVALS' value='newArrivals' />
-        <Tab label='BEST SELLERS' value='bestSellers' />
-        <Tab label='TOP RATED' value='topRated' />
+        <Tab label='Fall' value='bestSellers' />
+        <Tab label='Spring' value='topRated' />
       </Tabs>
       <Box margin='0 auto' display='grid' gridTemplateColumns='repeat(auto-fill, 300px)' justifyContent='space-around' rowGap='20px' columnGap='1.33%'>
         {value === "all" && items.map((item) => <Item item={item} key={`${item.name}-${item._id}`} />)}

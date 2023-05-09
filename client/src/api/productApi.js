@@ -7,8 +7,15 @@ const productApi = {
   },
   getProductById(data) {
     const url = `/product/${data}`;
-    // console.log(url);
     return axiosClient.get(url);
+  },
+  createProduct(data) {
+    const url = `/product`;
+    return axiosClient.post(url, data);
+  },
+  deleteProduct(data) {
+    const url = `/product`;
+    return axiosClient.delete(url, data);
   },
 };
 

@@ -15,7 +15,7 @@ const initialValuesRegister = {
   lastName: "",
   email: "",
   password: "",
-  picture: "",
+  // picture: "",
 };
 
 const initialValuesLogin = { email: "", password: "" };
@@ -25,7 +25,7 @@ const registerSchema = yup.object().shape({
   lastName: yup.string().trim().required("Last name is required"),
   email: yup.string().lowercase().trim().email("Invalid email").required("Email is required"),
   password: yup.string().trim().required("Password is required"),
-  picture: yup.string(),
+  // picture: yup.string().required("require"),
 });
 
 const loginSchema = yup.object().shape({
@@ -65,18 +65,15 @@ export default function Form() {
   };
   const register = async (values, onSubmitProps) => {
     const formData = new FormData();
-      for (let value in values) {
-        formData.append(value, values[value]);
-      }
-      formData.append("picturePath", values.picture.name);
+    for (let value in values) {
+      formData.append(value, values[value]);
+    }
+    // formData.append("picturePath", values.picture.name);
 
-    const savedUserResponse = await fetch(
-      "http://localhost:4000/auth/register",
-      {
-        method: "POST",
-        body: formData,
-      }
-    );
+    const savedUserResponse = await fetch("http://localhost:4000/auth/register", {
+      method: "POST",
+      body: formData,
+    });
     const savedUser = await savedUserResponse.json();
     onSubmitProps.resetForm();
 
@@ -144,7 +141,7 @@ export default function Form() {
                     helperText={touched.lastName && errors.lastName}
                     sx={{ gridColumn: "span 2" }}
                   />
-                  <Box gridColumn='span 4' border={`1px solid ${palette.neutral.medium}`} borderRadius='5px' p='1rem'>
+                  {/* <Box gridColumn='span 4' border={`1px solid ${palette.neutral.medium}`} borderRadius='5px' p='1rem'>
                     <Dropzone acceptedFiles='.jpg,.jpeg,.png' multiple={false} onDrop={(acceptedFiles) => setFieldValue("picture", acceptedFiles[0])}>
                       {({ getRootProps, getInputProps }) => (
                         <Box {...getRootProps()} border={`2px dashed ${palette.primary.main}`} p='1rem' sx={{ "&:hover": { cursor: "pointer" } }}>
@@ -160,7 +157,7 @@ export default function Form() {
                         </Box>
                       )}
                     </Dropzone>
-                  </Box>
+                  </Box> */}
                 </>
               )}
 

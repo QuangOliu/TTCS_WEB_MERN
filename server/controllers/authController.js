@@ -3,16 +3,16 @@ const User = require("../models/User");
 const bcrypt = require("bcrypt");
 const register = async (req, res) => {
   try {
-    const { firstName, lastName, email, password, picturePath } = req.body;
+    const { firstName, lastName, email, password } = req.body;
     const salt = await bcrypt.genSalt();
     const passwordHash = await bcrypt.hash(password, salt);
     const user = new User({
       firstName,
-      role: "user",
       lastName,
+      role: "user",
       email,
       password: passwordHash,
-      picturePath,
+      picturePath:"user.jpg",
     });
     user
       .save()

@@ -31,8 +31,22 @@ const UserSchema = new mongoose.Schema(
     },
     picturePath: {
       type: String,
-      // default: "",
+      default: "user.jpg",
     },
+    cart: [
+      {
+        id: {
+          type:  mongoose.ObjectId,
+          ref:"Product",
+          required: true,
+        },
+        quantity: {
+          type: Number,
+          min: 1,
+          required: true,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );

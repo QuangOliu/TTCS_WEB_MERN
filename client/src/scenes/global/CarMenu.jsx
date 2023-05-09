@@ -1,14 +1,13 @@
-import { Box, Button, Divider, IconButton, Typography, useMediaQuery } from "@mui/material";
-import { useSelector, useDispatch } from "react-redux";
-import CloseIcon from "@mui/icons-material/Close";
-import AddIcon from "@mui/icons-material/Add";
-import RemoveIcon from "@mui/icons-material/Remove";
-import styled from "@emotion/styled";
-import { shades } from "../../theme";
-import { decreaseCount, increaseCount, removeFromCart, setIsCartOpen } from "../../state";
-import { useNavigate } from "react-router-dom";
 import { useTheme } from "@emotion/react";
+import AddIcon from "@mui/icons-material/Add";
+import CloseIcon from "@mui/icons-material/Close";
+import RemoveIcon from "@mui/icons-material/Remove";
+import { Box, Button, Divider, IconButton, Typography } from "@mui/material";
 import FlexBetween from "components/FlexBetween";
+import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { decreaseCount, increaseCount, removeFromCart, setIsCartOpen } from "../../state";
+import { shades } from "../../theme";
 
 const CartMenu = () => {
   const navigate = useNavigate();
@@ -18,10 +17,7 @@ const CartMenu = () => {
 
   const theme = useTheme();
   const { palette } = useTheme();
-  const neutralLight = theme.palette.neutral.light;
   const dark = theme.palette.neutral.dark;
-  const background = theme.palette.background.default;
-  const primaryLight = theme.palette.primary.light;
   const alt = theme.palette.background.alt;
 
   const totalPrice = cart.reduce((total, item) => {
@@ -121,7 +117,7 @@ const CartMenu = () => {
                   "&:hover": { color: palette.primary.main },
                 }}
                 onClick={() => {
-                  navigate("/product");
+                  navigate("/");
                   dispatch(setIsCartOpen({}));
                 }}
               >

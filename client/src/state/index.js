@@ -6,7 +6,6 @@ const initialState = {
   user: null,
   token: null,
   cart: [],
-  // cart: [{id, count, price}]
   items: [],
 };
 
@@ -23,15 +22,22 @@ export const authSlice = createSlice({
     setLogin: (state, action) => {
       state.user = action.payload.user;
       state.token = action.payload.token;
+      // state.cart = action.payload.user?.cart;
     },
     setLogout: (state) => {
       state.user = null;
       state.token = null;
     },
+    setCheckOut: (state) => {
+      state.cart = [];
+    },
     setItems: (state, action) => {
       state.items = action.payload;
     },
 
+    setItem: (state, action) => {
+      state.items = [...state.items, action.payload];
+    },
     addToCart: (state, action) => {
       const existingCartItem = state.cart.find((cartItem) => cartItem._id === action.payload.item._id);
       if (existingCartItem) {
@@ -65,5 +71,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setMode, setLogin, setLogout, setItems, addToCart, removeFromCart, increaseCount, decreaseCount, setIsCartOpen } = authSlice.actions;
+export const { setMode, setLogin, setLogout, setItems,setItem, addToCart, removeFromCart, increaseCount, decreaseCount, setIsCartOpen, setCheckOut } = authSlice.actions;
 export default authSlice.reducer;

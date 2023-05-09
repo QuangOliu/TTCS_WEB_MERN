@@ -1,19 +1,18 @@
 import { useTheme } from "@emotion/react";
 import MarkEmailReadOutlinedIcon from "@mui/icons-material/MarkEmailReadOutlined";
-import { Box, Button, Divider, IconButton, InputBase, TextField, Typography, useMediaQuery } from "@mui/material";
-import FlexBetween from "components/FlexBetween";
+import { Box, Button, IconButton, TextField, Typography, useMediaQuery } from "@mui/material";
 import { useState } from "react";
 
 const Subscribe = () => {
   const [email, setEmail] = useState("");
 
-  const theme = useTheme();
+  // const theme = useTheme();
   const { palette } = useTheme();
-  const neutralLight = theme.palette.neutral.light;
-  const dark = theme.palette.neutral.dark;
-  const background = theme.palette.background.default;
-  const primaryLight = theme.palette.primary.light;
-  const alt = theme.palette.background.alt;
+  // const neutralLight = theme.palette.neutral.light;
+  // const dark = theme.palette.neutral.dark;
+  // const background = theme.palette.background.default;
+  // const primaryLight = theme.palette.primary.light;
+  // const alt = theme.palette.background.alt;
 
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
@@ -32,7 +31,7 @@ const Subscribe = () => {
           "& > div": { gridColumn: isNonMobile ? undefined : "span 4" },
         }}
       >
-        <TextField label='Email' name='email' backgroundColor={"red"} onChange={(e) => setEmail(e.target.value)} value={email} sx={{ marginTop: "10px", gridColumn: "span 3" }} />
+        <TextField label='Email' name='email' onChange={(e) => setEmail(e.target.value)} value={email} sx={{ marginTop: "10px", gridColumn: "span 3" }} />
         <Button
           sx={{
             m: isNonMobile ? "10px 0" : "10px 0 0 0",
