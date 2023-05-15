@@ -10,6 +10,7 @@ import Aleart from "scenes/global/Aleart";
 import { setCheckOut } from "state";
 import * as yup from "yup";
 import { shades } from "../../theme";
+import productApi from "api/productApi";
 
 const Checkout = () => {
   const dispatch = useDispatch();
@@ -22,29 +23,32 @@ const Checkout = () => {
   const { palette } = useTheme();
 
   const navigate = useNavigate();
+
   const handleFormSubmit = async (values, onSubmitProps) => {
     if (cart.length) {
       values["items"] = cart;
       values["userId"] = user._id;
-      const formData = JSON.stringify(values);
 
-      orderApi
-        .addOrder(formData)
-        .then((response) => {
-          setOpen(true);
-          setLoadding(true);
-          onSubmitProps.resetForm();
-          setTimeout(() => {
-            setLoadding(false);
-            dispatch(setCheckOut());
-            navigate("/");
-          }, 750);
-        })
-        .catch((error) => {
-          console.log(error);
-        });
+      try {
+        const formData = JSON.stringify(values);
+        const formData2 = {
+          cart: cart
+        }
+        const [orderResponse, productResponse] = await Promise.all([orderApi.addOrder(formData), productApi.updateQuantityProduct(JSON.stringify(formData2))]);
+
+        setOpen(true);
+        setLoadding(true);
+        onSubmitProps.resetForm();
+        setTimeout(() => {
+          setLoadding(false);
+          dispatch(setCheckOut());
+          navigate("/");
+        }, 750);
+      } catch (error) {
+        console.log(error);
+      }
     } else {
-      console.log("Ban phan them san pham");
+      console.log("Bạn chưa thêm sản phẩm nào");
     }
   };
 

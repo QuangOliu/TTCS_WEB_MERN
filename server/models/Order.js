@@ -1,41 +1,10 @@
 const mongoose = require("mongoose");
-
-// const orderSchema = new mongoose.Schema(
-//   {
-//     userId: { type: mongoose.Schema.Types.ObjectId, required: true, ref: "User" },
-//     items: {
-//       type: Array
-//     },
-//     name: {
-//       type: String,
-//       require: true,
-//     },
-//     phoneNumber: {
-//       type: String,
-//       require: true,
-//     },
-//     address: {
-//       type: String,
-//       require: true,
-//     },
-//     items: {
-//       type: String,
-//       require: true,
-//     },
-//     userId: {
-//       type: String,
-//       require: true,
-//     },
-//   },
-//   { timestamps: true }
-// );
-
 const orderSchema = new mongoose.Schema(
   {
     userId: {
       type: mongoose.Schema.Types.ObjectId,
       ref: "User",
-      required:true
+      required: true,
     },
     name: {
       type: String,
@@ -66,7 +35,32 @@ const orderSchema = new mongoose.Schema(
         },
       },
     ],
+    status: {
+      type: Number,
+      default: 1,
+      validate: {
+        validator: function (value) {
+          return value >= 1 && value <= 4;
+        },
+        message: "Status must be between 1 and 4",
+      },
+    },
+    statusHistory: [
+      {
+        status: {
+          type: Number,
+          default: 1,
+          min: 1,
+          max: 4,
+        },
+        timestamp: {
+          type: Date,
+          default: Date.now,
+        },
+      },
+    ],
   },
   { timestamps: true }
 );
+
 module.exports = mongoose.model("Order", orderSchema);

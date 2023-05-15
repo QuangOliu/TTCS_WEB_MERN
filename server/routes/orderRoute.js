@@ -1,11 +1,15 @@
 var express = require("express");
 const router = express.Router();
-const { addOrder , getOrder} = require("../controllers/orderController");
+const { addOrder, getOrders, getOrder, updateStatus, deleteMany } = require("../controllers/orderController");
 const { verifyToken, checkAdmin } = require("../middleware/authMiddleware");
-
-/* READ */
+// Create
 router.post("/", verifyToken, addOrder);
-router.get("/",checkAdmin, getOrder);
+/* READ */
+router.get("/", verifyToken, getOrders);
 /* UPDATE */
+router.patch("/updatestatus", checkAdmin, updateStatus);
+// Delete
+router.delete("/deletemany", checkAdmin, deleteMany);
 
+router.get("/:id", verifyToken, getOrder);
 module.exports = router;

@@ -21,15 +21,16 @@ const productSchema = mongoose.Schema(
     },
     quantity: {
       type: Number,
-      require: true,
+      required: true,
+      min: 0,
     },
     price: {
       type: Number,
       required: true,
     },
-    sales:{
+    sales: {
       type: Number,
-      default: 0
+      default: 0,
     },
     images: {
       type: Array,

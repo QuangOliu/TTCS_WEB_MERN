@@ -1,3 +1,4 @@
+import { Typography } from "@mui/material";
 import productApi from "api/productApi";
 import { useEffect, useState } from "react";
 import TableProduct from "scenes/Admin/ManageProduct/TableProduct";
@@ -72,25 +73,29 @@ function ManageDashboad() {
         setData(result);
         setData((data) => {
           return data.map((item) => {
-            item.linkTo = `/product/${item._id}`;
+            item.linkTo = `/manage/product/edit/${item._id}`;
+            // item.linkTo = `/product/${item._id}`;
             return item;
           });
         });
-        console.log(result);
       })
       .catch((err) => {
         console.log(err);
       });
   }, []);
 
-  const submitDelete = (selected) => {
-    const formdata = {
+  const submitDelete = async (selected) => {
+    const formData = {
       selected: selected,
     };
     productApi
-      .deleteProduct(formdata)
+      .deleteProducts(formData)
       .then((result) => {
-        console.log(result);
+        const newData = data.filter((item) => {
+          return !selected.includes(item._id);
+        });
+        console.log(newData);
+        setData(newData);
       })
       .catch((err) => {
         console.log(err);
@@ -99,6 +104,9 @@ function ManageDashboad() {
 
   return (
     <div>
+      <Typography variant='h3' textAlign='left' sx={{ mb: "15px" }}>
+        <b>Product Management</b>
+      </Typography>
       <TableProduct head={head} data={data} btn={btn} submitDelete={submitDelete} />
     </div>
   );

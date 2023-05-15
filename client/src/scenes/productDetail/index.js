@@ -13,6 +13,7 @@ import Item from "../../components/Item";
 import { addToCart } from "../../state";
 import { shades } from "../../theme";
 import ModalGlobal from "components/ModalGlobal";
+import productApi from "api/productApi";
 
 const ProductDetail = () => {
   const { palette } = useTheme();
@@ -41,7 +42,12 @@ const ProductDetail = () => {
   const isAuth = Boolean(useSelector((state) => state.token));
 
   useEffect(() => {
-    setItem(() => getItem(productId));
+    productApi
+      .getProductById(productId)
+      .then((result) => {
+        setItem(result);
+      })
+      .catch((err) => {});
   }, [productId]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
@@ -83,16 +89,17 @@ const ProductDetail = () => {
 
             <Box display='flex' alignItems='center' minHeight='50px'>
               <Box display='flex' alignItems='center' border={`1.5px solid ${shades.neutral[300]}`} mr='20px' p='2px 5px'>
-                <IconButton onClick={() => setCount(Math.max(count - 1, 0))}>
+                <IconButton disabled={item?.quantity < 0 || count > item?.quantity} onClick={() => setCount(Math.max(count - 1, 0))}>
                   <RemoveIcon />
                 </IconButton>
                 <Typography sx={{ p: "0 5px" }}>{count}</Typography>
-                <IconButton onClick={() => setCount(count + 1)}>
+                <IconButton disabled={item?.quantity < 0 || count > item?.quantity} onClick={() => setCount(count + 1)}>
                   <AddIcon />
                 </IconButton>
               </Box>
               <Button
                 fullWidth
+                disabled={item?.quantity < 0 || count > item?.quantity}
                 sx={{
                   m: "1rem 0",
                   p: "1rem",
@@ -101,10 +108,11 @@ const ProductDetail = () => {
                   "&:hover": { color: palette.primary.main },
                 }}
                 onClick={() => {
-                  setOpen(true);
-                  if (isAuth) {
-                    dispatch(addToCart({ item: { ...item, count } }));
-                  } else {
+                  if (item.quantity > 0 && count <= item.quantity) {
+                    setOpen(true);
+                    if (isAuth) {
+                      dispatch(addToCart({ item: { ...item, count } }));
+                    }
                   }
                 }}
               >

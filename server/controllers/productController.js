@@ -1,6 +1,7 @@
 const { json } = require("body-parser");
 const Product = require("../models/Product");
 const User = require("../models/User");
+const bodyParser = require("body-parser");
 
 // CREATE POST
 const createProduct = async (req, res) => {
@@ -47,17 +48,37 @@ const getProductById = async (req, res) => {
     const product = await Product.findOne({ _id: productId });
     res.status(200).json(product);
   } catch (error) {
-    res.status(404).json({ message: err.message });
+    res.status(404).json({ message: error });
   }
 };
 
 // READ POSTS FOR FEED
 const getFeedProduct = async (req, res) => {
   try {
-    const products = await Product.find().sort([["createdAt", 1]]);
+    let products = await Product.find().sort([["createdAt", 1]]);
+
     res.status(200).json(products);
   } catch (error) {
     res.status(404).json({ message: error.message });
+  }
+};
+
+const getListItem = async (req, res) => {
+  try {
+    const productIds = req.body;
+    // Sử dụng phương thức find() của mongoose để tìm các sản phẩm với mã sản phẩm trong danh sách
+    Product.find({ _id: { $in: productIds } })
+      .then((result) => {
+        return res.status(200).json({
+          status: "ok",
+          message: "fetch success",
+          data: result,
+        });
+      })
+      .catch((err) => {});
+  } catch (error) {
+    console.log(error);
+    return null;
   }
 };
 
@@ -90,18 +111,25 @@ const likeProduct = async (req, res) => {
   }
 };
 
-const updateProduct = (req, res) => {};
-
-const deleteProduct = (req, res) => {
+const deleteProducts = async (req, res) => {
   try {
     const { selected } = req.body;
-    console.log(req.body);
-
-    res.json({
-      data: req.bod,
-      status: "ok",
-      message: "delete Success",
-    });
+    // return res.json(selected);
+    Product.deleteMany({ _id: { $in: selected } })
+      .then((result) => {
+        res.json({
+          data: result,
+          status: "ok",
+          message: "delete Success",
+        });
+      })
+      .catch((err) => {
+        res.json({
+          data: "",
+          status: "false",
+          message: "Delete False",
+        });
+      });
   } catch (error) {
     res.json({
       data: "",
@@ -111,11 +139,67 @@ const deleteProduct = (req, res) => {
   }
 };
 
+const deleteProductById = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    res.json(productId);
+  } catch (error) {}
+};
+
+const updateQuantities = (req, res) => {
+  // res.json(req.body);
+  try {
+    const { cart } = req.body;
+
+    const updates = cart.map((item) => ({
+      updateOne: {
+        filter: { _id: item._id, quantity: { $gte: item.count } },
+        update: { $inc: { quantity: -item.count, sales: item.count } },
+      },
+    }));
+
+    Promise.all(updates)
+      .then((operations) => {
+        return Product.bulkWrite(operations);
+      })
+      .then((result) => {
+        res.json(result);
+      })
+      .catch((error) => {
+        res.status(400).json({ message: error.message });
+      });
+  } catch (error) {
+    res.json(error);
+  }
+};
+
+const updateProduct = (req, res) => {
+  const { productId } = req.params;
+  Product.findOneAndUpdate(productId, req.body, { new: true })
+    .then((result) => {
+      return res.status(200).json({
+        data: result,
+        status: "ok",
+        message: "update product success",
+      });
+    })
+    .catch((err) => {
+      return res.status(500).json({
+        status: 500,
+        message: "Some thing wrong when update product",
+        data: "",
+      });
+    });
+};
+
 module.exports = {
   createProduct,
   likeProduct,
   getProductById,
+  getListItem,
   getFeedProduct,
   updateProduct,
-  deleteProduct,
+  deleteProducts,
+  updateQuantities,
+  deleteProductById,
 };

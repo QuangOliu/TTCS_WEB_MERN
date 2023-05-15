@@ -1,33 +1,41 @@
 import { useTheme } from "@emotion/react";
 import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
+import DoneIcon from "@mui/icons-material/Done";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Toolbar, Tooltip, Typography, alpha } from "@mui/material";
+import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Tab, Tabs, Toolbar, Tooltip, Typography, alpha, useMediaQuery } from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import FlexBetween from "components/FlexBetween";
 import StyledTableCell from "components/StyledTableCell";
 import StyledTableRow from "components/StyledTableRow";
 import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-function TableProduct({ head, data, btn, submitDelete }) {
+const arrStatus = ["Order", "Approved", "Shipping", "Success"];
+
+function TableOrder({ head, data, btn, submitDelete, submitDone }) {
   const [selected, setSelected] = useState([]);
   const [selectedOne, setSelectedOne] = useState();
+  const [isDelete, setIsDelete] = useState(false);
   const [open, setOpen] = useState(false);
+  const [actionAllIn, setActionAllIn] = useState(false);
 
-  const navigate = useNavigate();
+  const [statusFilter, setStatusFilter] = useState(1);
 
-  const theme = useTheme();
+  const breakPoint = useMediaQuery("(min-width: 1000px)");
   const { palette } = useTheme();
+
+  const filteredData = data.filter((data) => {
+    return data.status === statusFilter; // Hiển thị chỉ những đơn hàng có trạng thái tương ứng
+  });
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = data.map((n) => n._id);
+      const newSelected = filteredData.map((n) => n._id);
       setSelected(newSelected);
-      console.log("newSelected: ", newSelected);
       return;
     }
     setSelected([]);
@@ -53,8 +61,11 @@ function TableProduct({ head, data, btn, submitDelete }) {
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const handleClickDeleteIcon = (selected) => {
-    console.log(selected);
     submitDelete(selected);
+  };
+
+  const handleClickDoneIcon = (selected) => {
+    submitDone(selected);
   };
 
   const handleClickOpen = () => {
@@ -63,11 +74,41 @@ function TableProduct({ head, data, btn, submitDelete }) {
 
   const handleClose = () => {
     setOpen(false);
+    setTimeout(() => {
+      setActionAllIn(false);
+      setSelectedOne();
+    }, 250);
   };
 
+  const handleChange = (event, newValue) => {
+    setStatusFilter(newValue);
+    setSelected([]);
+  };
+
+  // const
   return (
     <Box>
-      <Box m='0 auto' p={"0 15px"}>
+      <Box m='0 auto'>
+        <Box>
+          <Tabs
+            textColor='primary'
+            indicatorColor='primary'
+            value={statusFilter}
+            onChange={handleChange}
+            TabIndicatorProps={{ sx: { display: breakPoint ? "block" : "none" } }}
+            sx={{
+              "& .MuiTabs-flexContainer": {
+                flexWrap: "wrap",
+              },
+            }}
+          >
+            <Tab label='Order' value={1} />
+            <Tab label='Approved' value={2} />
+            <Tab label='Shipping' value={3} />
+            <Tab label='Success' value={4} />
+          </Tabs>
+        </Box>
+
         <Toolbar
           sx={{
             pl: { sm: 2 },
@@ -88,11 +129,32 @@ function TableProduct({ head, data, btn, submitDelete }) {
           )}
 
           {selected.length > 0 ? (
-            <Tooltip title='Delete'>
-              <IconButton onClick={() => handleClickDeleteIcon(selected)}>
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
+            <FlexBetween>
+              <Tooltip title='Xóa'>
+                <IconButton
+                  onClick={() => {
+                    setIsDelete(true);
+                    setActionAllIn(true);
+                    setOpen(true);
+                  }}
+                >
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+              {statusFilter <= 3 && (
+                <Tooltip title='Duyệt'>
+                  <IconButton
+                    onClick={() => {
+                      setIsDelete(false);
+                      setActionAllIn(true);
+                      setOpen(true);
+                    }}
+                  >
+                    <DoneIcon />
+                  </IconButton>
+                </Tooltip>
+              )}
+            </FlexBetween>
           ) : (
             <Tooltip title='Filter list'>
               <IconButton>
@@ -123,7 +185,11 @@ function TableProduct({ head, data, btn, submitDelete }) {
                     />
                   </StyledTableCell>
                   {head.map((item) => {
-                    return <StyledTableCell key={item.id}>{item.lable}</StyledTableCell>;
+                    return (
+                      <StyledTableCell key={item.id} align='left'>
+                        {item.lable}
+                      </StyledTableCell>
+                    );
                   })}
                   <StyledTableCell align='center' colSpan={2}>
                     Action
@@ -133,9 +199,9 @@ function TableProduct({ head, data, btn, submitDelete }) {
             )}
 
             {/* Body of table */}
-            {data ? (
+            {filteredData?.length > 0 ? (
               <TableBody>
-                {data.map((row) => {
+                {filteredData.map((row) => {
                   const isItemSelected = isSelected(row._id);
                   return (
                     <StyledTableRow key={row._id}>
@@ -151,23 +217,24 @@ function TableProduct({ head, data, btn, submitDelete }) {
                       <StyledTableCell align='left'>
                         <Link to={row.linkTo}>{row._id}</Link>
                       </StyledTableCell>
-                      <StyledTableCell align='left'>{row.category.length > 50 ? `${row.category.slice(0, 50)}...v.v` : row.category}</StyledTableCell>
                       <StyledTableCell align='left'>{row.name.length > 50 ? `${row.name.slice(0, 50)}...v.v` : row.name}</StyledTableCell>
-                      <StyledTableCell align='left'>{row.shortDescription.length > 50 ? `${row.shortDescription.slice(0, 50)}...v.v` : row.shortDescription}</StyledTableCell>
-                      <StyledTableCell align='left'>{row.longDescription.length > 50 ? `${row.longDescription.slice(0, 50)}...v.v` : row.longDescription}</StyledTableCell>
-                      <StyledTableCell align='left'>{row.quantity}</StyledTableCell>
-                      <StyledTableCell align='left'>{row.price}</StyledTableCell>
-                      <StyledTableCell align='left'>{row.sales}</StyledTableCell>
+                      <StyledTableCell align='left'>{row.phoneNumber.length > 50 ? `${row.phoneNumber.slice(0, 50)}...v.v` : row.phoneNumber}</StyledTableCell>
+                      <StyledTableCell align='left'>{row.address.length > 50 ? `${row.address.slice(0, 50)}...v.v` : row.address}</StyledTableCell>
+                      <StyledTableCell align='center'>
+                        {row.items.reduce((acc, item) => {
+                          return acc + item.price * item.count;
+                        }, 0)}
+                      </StyledTableCell>
                       <StyledTableCell align='left'>{row.createdAt.slice(0, 10)}</StyledTableCell>
+                      <StyledTableCell align='left'>{arrStatus[row.status - 1]}</StyledTableCell>
                       <StyledTableCell align='left'>
                         <IconButton
                           aria-label='delete'
                           size='large'
                           onClick={(e) => {
-                            // handleClick(e, row._id);
+                            setIsDelete(true);
                             setSelectedOne(row._id);
                             handleClickOpen();
-                            // handleClickDeleteIcon([row._id]);
                           }}
                           sx={{
                             m: "2rem 0",
@@ -180,63 +247,59 @@ function TableProduct({ head, data, btn, submitDelete }) {
                           <DeleteIcon fontSize='inherit' />
                         </IconButton>
                       </StyledTableCell>
-                      <StyledTableCell align='left'>
-                        <IconButton
-                          onClick={() => {
-                            navigate(`${row.linkTo}`);
-                          }}
-                          size='large'
-                          sx={{
-                            m: "2rem 0",
-                            p: "1rem",
-                            backgroundColor: palette.primary.main,
-                            color: "white",
-                            "&:hover": { color: palette.primary.main },
-                          }}
-                        >
-                          <EditIcon fontSize='inherit' />
-                        </IconButton>
-                      </StyledTableCell>
+                      {row.status <= 3 && (
+                        <StyledTableCell align='left'>
+                          <IconButton
+                            onClick={(e) => {
+                              setIsDelete(false);
+                              setSelectedOne(row._id);
+                              handleClickOpen();
+                            }}
+                            size='large'
+                            sx={{
+                              m: "2rem 0",
+                              p: "1rem",
+                              backgroundColor: palette.primary.main,
+                              color: "white",
+                              "&:hover": { color: palette.primary.main },
+                            }}
+                          >
+                            <DoneIcon fontSize='inherit' />
+                          </IconButton>
+                        </StyledTableCell>
+                      )}
                     </StyledTableRow>
                   );
                 })}
               </TableBody>
             ) : (
-              <Box>
-                <Box width={"100%"} pt={"15px"} m='15px auto' backgroundColor={theme.palette.background.alt}>
-                  <Typography display={"block"} fontWeight='500' variant='h5' textAlign={"center"} sx={{ mb: "1.5rem" }}>
-                    Dữ liệu trống
-                  </Typography>
-                </Box>
-              </Box>
+              <TableBody>
+                <StyledTableRow>
+                  <StyledTableCell align='center' colSpan={112}>
+                    <Typography>Dữ liệu trống</Typography>
+                  </StyledTableCell>
+                </StyledTableRow>
+              </TableBody>
             )}
           </Table>
         </TableContainer>
-        {btn && (
-          <Box width={"100%"} display={"flex"} justifyContent={"end"}>
-            <Button
-              sx={{
-                m: "2rem 0",
-                p: "1rem",
-                backgroundColor: palette.primary.main,
-                color: palette.background.alt,
-                "&:hover": { color: palette.primary.main },
-              }}
-              onClick={() => {
-                navigate(`${btn.linkTo}`);
-              }}
-            >
-              {btn.title}
-            </Button>
-          </Box>
-        )}
       </Box>
 
       <Dialog open={open} onClose={handleClose} aria-labelledby='alert-dialog-title' aria-describedby='alert-dialog-description'>
-        <DialogTitle id='alert-dialog-title'>Xác nhận xóa</DialogTitle>
+        <DialogTitle id='alert-dialog-title'>{isDelete ? "Xác nhận xóa" : "Xác nhận duyệt"}</DialogTitle>
         <DialogContent>
           <DialogContentText id='alert-dialog-description'>
-            Bạn có chắc chắn muốn xóa sản phẩm <strong>{selectedOne}</strong>
+            {isDelete ? "Bạn có chắc chắn muốn xóa sản phẩm với id:" : "Bạn có chắc chắn muốn duyệt sản phẩm với id: "}
+            <br />
+            <br />
+            {selectedOne
+              ? selectedOne
+              : selected.map((item, index) => (
+                  <span key={index}>
+                    <strong>{item}</strong>
+                    <br />
+                  </span>
+                ))}
           </DialogContentText>
         </DialogContent>
         <DialogActions>
@@ -255,19 +318,32 @@ function TableProduct({ head, data, btn, submitDelete }) {
             aria-label='delete'
             size='large'
             onClick={() => {
-              // handleClickDeleteIcon([row._id]);
-              handleClickDeleteIcon([selectedOne]);
+              if (isDelete) {
+                if (actionAllIn) {
+                  handleClickDeleteIcon(selected);
+                } else {
+                  handleClickDeleteIcon([selectedOne]);
+                }
+              } else {
+                if (actionAllIn) {
+                  handleClickDoneIcon(selected);
+                } else {
+                  handleClickDoneIcon([selectedOne]);
+                }
+              }
+              setSelected([]);
+              setSelectedOne();
               handleClose();
             }}
             autoFocus
             sx={{
               p: "1rem",
-              backgroundColor: palette.background.error,
+              backgroundColor: isDelete ? palette.background.error : palette.primary.main,
               color: "white",
-              "&:hover": { color: palette.background.error },
+              "&:hover": { color: isDelete ? palette.background.error : palette.primary.main },
             }}
           >
-            Xóa
+            {isDelete ? "Xóa" : "Duyệt"}
           </Button>
         </DialogActions>
       </Dialog>
@@ -275,4 +351,4 @@ function TableProduct({ head, data, btn, submitDelete }) {
   );
 }
 
-export default TableProduct;
+export default TableOrder;

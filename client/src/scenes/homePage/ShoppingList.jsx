@@ -3,14 +3,27 @@ import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import useMediaQuery from "@mui/material/useMediaQuery";
-import { useState } from "react";
-import { useSelector } from "react-redux";
+import productApi from "api/productApi";
+import { useEffect, useState } from "react";
 import Item from "../../components/Item";
 
 const ShoppingList = () => {
   const [value, setValue] = useState("all");
-  const items = useSelector((state) => state.items);
+  const [items, setItems] = useState([]);
+  // const items = useSelector((state) => state.items);
+
   const breakPoint = useMediaQuery("(min-width: 1000px)");
+
+  useEffect(() => {
+    productApi
+      .getAllProduct()
+      .then((result) => {
+        setItems(result);
+      })
+      .catch((err) => {
+        console.log(err)
+      });
+  }, []);
 
   // const dispatch = useDispatch();
 
@@ -49,7 +62,7 @@ const ShoppingList = () => {
         {value === "all" && items.map((item) => <Item item={item} key={`${item.name}-${item._id}`} />)}
         {value === "newArrivals" && newArrivalsItems.map((item) => <Item item={item} key={`newArrivals-${item._id}`} />)}
         {value === "bestSellers" && bestSellersItems.map((item) => <Item item={item} key={`bestSellers-${item._id}`} />)}
-        {value === "topRated" && topRatedItems.map((item) => <Item item={item} key={`topRated-${item.id}`} />)}
+        {value === "topRated" && topRatedItems.map((item) => <Item item={item} key={`topRated-${item._id}`} />)}
       </Box>
     </Box>
   );

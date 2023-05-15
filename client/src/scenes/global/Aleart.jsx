@@ -20,7 +20,11 @@ function Aleart({ title, messsage, open, setOpen, type = "success", time = 750 }
   return (
     <Backdrop sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }} open={open} onClick={handleClose}>
       <div className='custom-modal'>
-        <div className={`${type} succes-animation icon-top`}>{type === "success" ? <CheckCircleOutlineIcon sx={{ fontSize: "45px" }} /> : <PriorityHighIcon sx={{ fontSize: "45px" }} />}</div>
+        {/* <div className={`${type} succes-animation icon-top`}>{type === "success" ? <CheckCircleOutlineIcon sx={{ fontSize: "45px" }} /> : <PriorityHighIcon sx={{ fontSize: "45px" }} />}</div> */}
+
+        <div className='succes succes-animation icon-top'>
+          <CheckCircleOutlineIcon sx={{ fontSize: "45px" }} />
+        </div>
         <div className={`${type} border-bottom`}></div>
         <div className='content'>
           <p className='type'>{title}</p>

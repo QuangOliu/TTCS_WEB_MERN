@@ -27,6 +27,11 @@ export const colorTokens = {
     800: "#00353F",
     900: "#001519",
   },
+  error: {
+    main: "#d32f2f",
+    light: "#ef5350",
+    dark: "#c62828",
+  },
 };
 
 export const shades = {
@@ -87,6 +92,7 @@ export const themeSettings = (mode) => {
             },
             background: {
               default: colorTokens.grey[900],
+              error: colorTokens.error.dark,
               alt: colorTokens.grey[800],
             },
           }
@@ -106,6 +112,7 @@ export const themeSettings = (mode) => {
             },
             background: {
               default: colorTokens.grey[10],
+              error: colorTokens.error.light,
               alt: colorTokens.grey[0],
             },
           }),

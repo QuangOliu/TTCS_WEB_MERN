@@ -95,6 +95,7 @@ export default function FormCreate() {
           handleChange,
           handleSubmit,
           setFieldValue,
+          setValues,
           resetForm,
           isSubmitting,
           /* and other goodies */

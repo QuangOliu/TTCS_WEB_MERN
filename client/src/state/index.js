@@ -41,7 +41,7 @@ export const authSlice = createSlice({
     addToCart: (state, action) => {
       const existingCartItem = state.cart.find((cartItem) => cartItem._id === action.payload.item._id);
       if (existingCartItem) {
-        const newCart = state.cart.map((cartItem) => (cartItem._id === action.payload.item._id ? { ...cartItem, count: cartItem.count + action.payload.item.count } : cartItem));
+        const newCart = state.cart.map((cartItem) => (cartItem._id === action.payload.item._id ? { ...cartItem, count: Math.min(cartItem.count + action.payload.item.count, cartItem.quantity) } : cartItem));
         state.cart = [...newCart];
         return;
       }

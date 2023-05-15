@@ -1,14 +1,14 @@
 import AddIcon from "@mui/icons-material/Add";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { Box, Button, Fade, IconButton, Modal, Typography, useTheme } from "@mui/material";
+import { Box, Button, IconButton, Typography, useTheme } from "@mui/material";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import Aleart from "scenes/global/Aleart";
 import { addToCart } from "../state";
 import { shades } from "../theme";
-import "./styles.css";
 import ModalGlobal from "./ModalGlobal";
+import "./styles.css";
 
 const Item = ({ item, width }) => {
   const [open, setOpen] = useState(false);
@@ -22,7 +22,7 @@ const Item = ({ item, width }) => {
     palette: { neutral },
   } = useTheme();
 
-  const { category, price, name, images } = item;
+  const { category, price, name, images, quantity } = item;
   const url = images[0];
 
   return (
@@ -40,19 +40,22 @@ const Item = ({ item, width }) => {
         <Box display={isHovered ? "block" : "none"} position='absolute' bottom='10%' left='0' width='100%' padding='0 5%'>
           <Box display='flex' justifyContent='space-between'>
             <Box display='flex' alignItems='center' backgroundColor={shades.neutral[100]} borderRadius='3px'>
-              <IconButton onClick={() => setCount(Math.max(count - 1, 1))}>
+              <IconButton disabled={item.quantity < 0 || count > item.quantity} onClick={() => setCount(Math.max(count - 1, 1))}>
                 <RemoveIcon />
               </IconButton>
               <Typography color={shades.primary[300]}>{count}</Typography>
-              <IconButton onClick={() => setCount(count + 1)}>
+              <IconButton disabled={item.quantity < 0 || count > item.quantity} onClick={() => setCount(Math.min(count + 1, quantity))}>
                 <AddIcon />
               </IconButton>
             </Box>
             <Button
+              disabled={item.quantity < 0 || count > item.quantity}
               onClick={() => {
-                setOpen(true);
-                if (isAuth) {
-                  dispatch(addToCart({ item: { ...item, count } }));
+                if (item.quantity > 0 && count <= item.quantity) {
+                  setOpen(true);
+                  if (isAuth) {
+                    dispatch(addToCart({ item: { ...item, count } }));
+                  }
                 }
               }}
               sx={{ backgroundColor: shades.primary[300], color: "white" }}

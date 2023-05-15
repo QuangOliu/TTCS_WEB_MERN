@@ -58,11 +58,21 @@ const CartMenu = () => {
                       <Typography>{item.shortDescription}</Typography>
                       <FlexBetween m='15px 0'>
                         <Box display='flex' alignItems='center' border={`1.5px solid ${shades.neutral[500]}`}>
-                          <IconButton onClick={() => dispatch(decreaseCount({ _id: item._id }))}>
+                          <IconButton
+                            onClick={() => {
+                              dispatch(decreaseCount({ _id: item._id }));
+                            }}
+                          >
                             <RemoveIcon />
                           </IconButton>
                           <Typography>{item.count}</Typography>
-                          <IconButton onClick={() => dispatch(increaseCount({ _id: item._id }))}>
+                          <IconButton
+                            onClick={() => {
+                              if (item.count <= item.quantity) {
+                                dispatch(increaseCount({ _id: item._id }));
+                              }
+                            }}
+                          >
                             <AddIcon />
                           </IconButton>
                         </Box>
