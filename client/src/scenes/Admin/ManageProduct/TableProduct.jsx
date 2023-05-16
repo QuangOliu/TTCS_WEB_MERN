@@ -13,7 +13,64 @@ import StyledTableRow from "components/StyledTableRow";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 
-function TableProduct({ head, data, btn, submitDelete }) {
+const head = [
+  {
+    numeric: true,
+    disablePadding: false,
+    lable: "Product ID",
+    id: "_id",
+  },
+  {
+    numeric: true,
+    disablePadding: false,
+    lable: "Category",
+    id: "category",
+  },
+  {
+    numeric: true,
+    disablePadding: false,
+    lable: "Name",
+    id: "name",
+  },
+  {
+    numeric: true,
+    disablePadding: false,
+    lable: "Short Description",
+    id: "shortDescription",
+  },
+  {
+    numeric: true,
+    disablePadding: false,
+    lable: "LongDescription",
+    id: "longDescription",
+  },
+  {
+    numeric: true,
+    disablePadding: false,
+    lable: "Quantity",
+    id: "quantity",
+  },
+  {
+    numeric: true,
+    disablePadding: false,
+    lable: "Price",
+    id: "price",
+  },
+  {
+    numeric: true,
+    disablePadding: false,
+    lable: "Sales",
+    id: "sales",
+  },
+  {
+    numeric: true,
+    disablePadding: false,
+    lable: "CreateAt",
+    id: "createdAt",
+  },
+];
+function TableProduct({ data, btn, submitDelete }) {
+  console.log(data);
   const [selected, setSelected] = useState([]);
   const [selectedOne, setSelectedOne] = useState();
   const [open, setOpen] = useState(false);
@@ -67,40 +124,42 @@ function TableProduct({ head, data, btn, submitDelete }) {
 
   return (
     <Box>
-      <Box m='0 auto' p={"0 15px"}>
-        <Toolbar
-          sx={{
-            pl: { sm: 2 },
-            pr: { xs: 1, sm: 1 },
-            ...(selected.length > 0 && {
-              bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
-            }),
-          }}
-        >
-          {selected.length > 0 ? (
-            <Typography sx={{ flex: "1 1 100%" }} color='inherit' variant='subtitle1' component='div'>
-              {selected.length} selected
-            </Typography>
-          ) : (
-            <Typography sx={{ flex: "1 1 100%" }} variant='h6' id='tableTitle' component='div'>
-              Nutrition
-            </Typography>
-          )}
+      <Box m='0 auto'>
+        {submitDelete && (
+          <Toolbar
+            sx={{
+              pl: { sm: 2 },
+              pr: { xs: 1, sm: 1 },
+              ...(selected.length > 0 && {
+                bgcolor: (theme) => alpha(theme.palette.primary.main, theme.palette.action.activatedOpacity),
+              }),
+            }}
+          >
+            {selected.length > 0 ? (
+              <Typography sx={{ flex: "1 1 100%" }} color='inherit' variant='subtitle1' component='div'>
+                {selected.length} selected
+              </Typography>
+            ) : (
+              <Typography sx={{ flex: "1 1 100%" }} variant='h6' id='tableTitle' component='div'>
+                Nutrition
+              </Typography>
+            )}
 
-          {selected.length > 0 ? (
-            <Tooltip title='Delete'>
-              <IconButton onClick={() => handleClickDeleteIcon(selected)}>
-                <DeleteIcon />
-              </IconButton>
-            </Tooltip>
-          ) : (
-            <Tooltip title='Filter list'>
-              <IconButton>
-                <FilterListIcon />
-              </IconButton>
-            </Tooltip>
-          )}
-        </Toolbar>
+            {selected.length > 0 ? (
+              <Tooltip title='Delete'>
+                <IconButton onClick={() => handleClickDeleteIcon(selected)}>
+                  <DeleteIcon />
+                </IconButton>
+              </Tooltip>
+            ) : (
+              <Tooltip title='Filter list'>
+                <IconButton>
+                  <FilterListIcon />
+                </IconButton>
+              </Tooltip>
+            )}
+          </Toolbar>
+        )}
 
         <TableContainer>
           <Table sx={{ minWidth: 700 }} aria-label='customized table'>
@@ -108,20 +167,22 @@ function TableProduct({ head, data, btn, submitDelete }) {
             {head && (
               <TableHead>
                 <TableRow>
-                  <StyledTableCell align='left'>
-                    <Checkbox
-                      color='primary'
-                      sx={{
-                        backgroundColor: "white",
-                      }}
-                      indeterminate={selected.length > 0 && selected.length < data.length}
-                      checked={selected.length > 0 && selected.length === data.length}
-                      onChange={handleSelectAllClick}
-                      inputProps={{
-                        "aria-label": "select all desserts",
-                      }}
-                    />
-                  </StyledTableCell>
+                  {submitDelete && (
+                    <StyledTableCell align='left'>
+                      <Checkbox
+                        color='primary'
+                        sx={{
+                          backgroundColor: "white",
+                        }}
+                        indeterminate={selected.length > 0 && selected.length < data.length}
+                        checked={selected.length > 0 && selected.length === data.length}
+                        onChange={handleSelectAllClick}
+                        inputProps={{
+                          "aria-label": "select all desserts",
+                        }}
+                      />
+                    </StyledTableCell>
+                  )}
                   {head.map((item) => {
                     return <StyledTableCell key={item.id}>{item.lable}</StyledTableCell>;
                   })}
@@ -139,15 +200,18 @@ function TableProduct({ head, data, btn, submitDelete }) {
                   const isItemSelected = isSelected(row._id);
                   return (
                     <StyledTableRow key={row._id}>
-                      <StyledTableCell align='left' onClick={(event) => handleClick(event, row._id)}>
-                        <Checkbox
-                          color='primary'
-                          sx={{
-                            backgroundColor: "white",
-                          }}
-                          checked={isItemSelected}
-                        />
-                      </StyledTableCell>
+                      {submitDelete && (
+                        <StyledTableCell align='left' onClick={(event) => handleClick(event, row._id)}>
+                          <Checkbox
+                            color='primary'
+                            sx={{
+                              backgroundColor: "white",
+                            }}
+                            checked={isItemSelected}
+                          />
+                        </StyledTableCell>
+                      )}
+
                       <StyledTableCell align='left'>
                         <Link to={row.linkTo}>{row._id}</Link>
                       </StyledTableCell>
@@ -183,7 +247,7 @@ function TableProduct({ head, data, btn, submitDelete }) {
                       <StyledTableCell align='left'>
                         <IconButton
                           onClick={() => {
-                            navigate(`${row.linkTo}`);
+                            navigate(`/manage/product/edit/${row._id}`);
                           }}
                           size='large'
                           sx={{

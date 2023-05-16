@@ -1,10 +1,12 @@
 import { useTheme } from "@emotion/react";
+import { FavoriteBorderOutlined, FavoriteOutlined } from "@mui/icons-material";
 import AddIcon from "@mui/icons-material/Add";
-import FavoriteBorderOutlinedIcon from "@mui/icons-material/FavoriteBorderOutlined";
 import RemoveIcon from "@mui/icons-material/Remove";
 import { Box, Button, IconButton, Typography } from "@mui/material";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
+import productApi from "api/productApi";
+import ModalGlobal from "components/ModalGlobal";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate, useParams } from "react-router-dom";
@@ -12,18 +14,19 @@ import Aleart from "scenes/global/Aleart";
 import Item from "../../components/Item";
 import { addToCart } from "../../state";
 import { shades } from "../../theme";
-import ModalGlobal from "components/ModalGlobal";
-import productApi from "api/productApi";
+import Review from "./Review";
 
 const ProductDetail = () => {
   const { palette } = useTheme();
-  const dispatch = useDispatch();
   const { productId } = useParams();
+
   const [open, setOpen] = useState(false);
   const [value, setValue] = useState("description");
   const [count, setCount] = useState(1);
   const [item, setItem] = useState();
+  const [isLiked, setIsLiked] = useState(false);
 
+  const dispatch = useDispatch();
   const navigate = useNavigate();
 
   const handleChange = (event, newValue) => {
@@ -32,23 +35,29 @@ const ProductDetail = () => {
   const handleClose = () => {
     setOpen(false);
   };
-  const items = useSelector((state) => state.items);
-  function getItem(productId) {
-    return items.find((item) => {
-      return item._id === productId;
-    });
-  }
 
+  const items = useSelector((state) => state.items);
   const isAuth = Boolean(useSelector((state) => state.token));
+  const userId = useSelector((state) => state.user._id);
+
+  const patchLike = () => {
+    productApi
+      .pathLike(productId, userId)
+      .then((result) => {
+        setIsLiked(Boolean(result?.likes[userId]));
+      })
+      .catch((err) => {});
+  };
 
   useEffect(() => {
     productApi
       .getProductById(productId)
       .then((result) => {
         setItem(result);
+        setIsLiked(Boolean(result?.likes[userId]));
       })
       .catch((err) => {});
-  }, [productId]); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [productId, userId]);
 
   return (
     <Box>
@@ -119,10 +128,11 @@ const ProductDetail = () => {
                 ADD TO CART
               </Button>
             </Box>
-            <Box>
-              <Box m='20px 0 5px 0' display='flex'>
-                <FavoriteBorderOutlinedIcon />
-                <Typography sx={{ ml: "5px" }}>ADD TO WISHLIST</Typography>
+            <Box cursor='pointer'>
+              <Box m='20px 0 5px 0' display='flex' alignItems={"center"} onClick={patchLike}>
+                {" "}
+                <IconButton>{isLiked ? <FavoriteOutlined sx={{ color: "red" }} /> : <FavoriteBorderOutlined />}</IconButton>
+                <Typography sx={{ ml: "5px", textAlign: "center" }}>ADD TO WISHLIST</Typography>
               </Box>
               <Typography>CATEGORIES: {item?.category}</Typography>
             </Box>
@@ -138,7 +148,11 @@ const ProductDetail = () => {
         </Box>
         <Box display='flex' flexWrap='wrap' gap='15px'>
           {value === "description" && <div>{item?.longDescription}</div>}
-          {value === "reviews" && <div>reviews</div>}
+          {value === "reviews" && (
+            <div>
+              <Review />
+            </div>
+          )}
         </Box>
 
         {/* RELATED ITEMS */}

@@ -33,6 +33,11 @@ const productApi = {
     const url = `/product/${data}`;
     return axiosClient.delete(url);
   },
+  pathLike(id, userId) {
+    // :id/like
+    const url = `/product/${id}/like`;
+    return axiosClient.patch(url, { userId });
+  },
 };
 
 export default productApi;

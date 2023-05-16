@@ -1,11 +1,15 @@
 var express = require("express");
 const router = express.Router();
-const { addOrder, getOrders, getOrder, updateStatus, deleteMany } = require("../controllers/orderController");
+const { addOrder, getOrders, getOrder, updateStatus, deleteMany, thongke, getOrdersByUserId } = require("../controllers/orderController");
 const { verifyToken, checkAdmin } = require("../middleware/authMiddleware");
 // Create
 router.post("/", verifyToken, addOrder);
 /* READ */
 router.get("/", verifyToken, getOrders);
+// /order/user/${userId}\
+router.get('/user/:userId', getOrdersByUserId)
+
+router.get("/thongke/:productId", checkAdmin, thongke)
 /* UPDATE */
 router.patch("/updatestatus", checkAdmin, updateStatus);
 // Delete

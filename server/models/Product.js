@@ -1,5 +1,28 @@
 const mongoose = require("mongoose");
 
+const reviewSchema = mongoose.Schema({
+  userId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    required: true,
+  },
+  rating: {
+    type: Number,
+    required: true,
+    min: 1,
+    max: 5,
+  },
+  comment: {
+    type: String,
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  // Các trường thông tin khác trong review
+});
+
 const productSchema = mongoose.Schema(
   {
     category: {
@@ -39,9 +62,10 @@ const productSchema = mongoose.Schema(
     likes: {
       type: Map,
       of: Boolean,
+      default: {},
     },
     comments: {
-      type: Array,
+      type: [reviewSchema],
       default: [],
     },
   },

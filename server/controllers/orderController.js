@@ -154,10 +154,68 @@ const deleteMany = (req, res) => {
   }
 };
 
+const thongke = (req, res) => {
+  try {
+    const { productId } = req.params;
+    Order.find()
+      .then((result) => {
+        const salesByMonth = getProductSalesByMonth(productId, result);
+        res.json(salesByMonth);
+      })
+      .catch((err) => {});
+  } catch (error) {
+    return res.json(error);
+  }
+};
+const getOrdersByUserId = (req, res) => {
+  try {
+    const { userId } = req.params;
+    Order.find({ userId })
+      .then((result) => {
+        return res.json({ data: result, status: "ok", message: "ok" });
+      })
+      .catch((err) => {});
+  } catch (error) {}
+};
+
+function getProductSalesByMonth(productId, orders) {
+  // Tạo một đối tượng để lưu trữ kết quả thống kê
+  const productSalesByMonth = {};
+
+  const months = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
+  for (const month of months) {
+    if (!productSalesByMonth[month]) {
+      productSalesByMonth[month] = 0;
+    }
+  }
+
+  // Lặp qua từng đơn hàng
+  for (const order of orders) {
+    // Lấy tháng từ createdAt
+    const month = new Date(order.createdAt).getMonth() + 1;
+
+    // Kiểm tra nếu đơn hàng có chứa sản phẩm có productId
+    const foundItem = order.items.find((item) => {
+      return item._id.toString() === productId;
+    });
+    if (foundItem) {
+      // Kiểm tra nếu chưa có thông tin thống kê cho tháng này, tạo mới
+      if (!productSalesByMonth[`Tháng ${month}`]) {
+        productSalesByMonth[`Tháng ${month}`] = 0;
+      }
+      // Tăng số lượng bán được trong tháng lên 1
+      productSalesByMonth[`Tháng ${month}`] += foundItem.count;
+    }
+  }
+
+  return productSalesByMonth;
+}
 module.exports = {
   addOrder,
   getOrders,
   getOrder,
   updateStatus,
   deleteMany,
+  thongke,
+  getOrdersByUserId,
 };

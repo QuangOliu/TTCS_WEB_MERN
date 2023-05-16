@@ -10,6 +10,7 @@ import EditProduct from "scenes/Admin/EditProduct";
 import ManageOrder from "scenes/Admin/ManageOrder";
 import ManageProduct from "scenes/Admin/ManageProduct";
 import OrderDetail from "scenes/OrderDetail";
+import StatisticalProduct from "scenes/Statistical/Product";
 import Checkout from "scenes/checkoutPage/Checkout";
 import CartMenu from "scenes/global/CarMenu";
 import Navbar from "scenes/global/Navbar";
@@ -72,6 +73,13 @@ function App() {
                   </Route>
 
                   <Route index element={<ManageDashboad />} />
+                </Route>
+              )}
+              {isAdmin && (
+                <Route path='/statistical'>
+                  <Route path='product'>
+                    <Route path=':productId' element={<StatisticalProduct />}></Route>
+                  </Route>
                 </Route>
               )}
               <Route path='*' element={<NotFound />} />

@@ -21,6 +21,14 @@ const orderApi = {
     const url = "/order/updatestatus";
     return axiosClient.patch(url, { data });
   },
+  thongkeProductId(productId) {
+    const url = `/order/thongke/${productId}`;
+    return axiosClient.get(url);
+  },
+  getOrderByUserId(userId) {
+    const url = `/order/user/${userId}`;
+    return axiosClient.get(url);
+  },
 };
 
 export default orderApi;

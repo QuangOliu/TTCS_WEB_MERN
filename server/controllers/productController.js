@@ -87,6 +87,7 @@ const likeProduct = async (req, res) => {
   try {
     const { id } = req.params;
     const { userId } = req.body;
+
     const product = await Product.findById(id);
     const isLiked = product.likes.get(userId);
 

@@ -41,7 +41,9 @@ export const authSlice = createSlice({
     addToCart: (state, action) => {
       const existingCartItem = state.cart.find((cartItem) => cartItem._id === action.payload.item._id);
       if (existingCartItem) {
-        const newCart = state.cart.map((cartItem) => (cartItem._id === action.payload.item._id ? { ...cartItem, count: Math.min(cartItem.count + action.payload.item.count, cartItem.quantity) } : cartItem));
+        const newCart = state.cart.map((cartItem) =>
+          cartItem._id === action.payload.item._id ? { ...cartItem, count: Math.min(cartItem.count + action.payload.item.count, cartItem.quantity) } : cartItem
+        );
         state.cart = [...newCart];
         return;
       }
@@ -50,7 +52,9 @@ export const authSlice = createSlice({
     removeFromCart: (state, action) => {
       state.cart = state.cart.filter((item) => item._id !== action.payload._id);
     },
-
+    removeManyFromCart: (state, action) => {
+      state.cart = state.cart.filter((item) => !action.payload.includes(item._id));
+    },
     increaseCount: (state, action) => {
       state.cart = state.cart.map((item) => {
         if (item._id === action.payload._id) {
@@ -71,5 +75,5 @@ export const authSlice = createSlice({
   },
 });
 
-export const { setMode, setLogin, setLogout, setItems,setItem, addToCart, removeFromCart, increaseCount, decreaseCount, setIsCartOpen, setCheckOut } = authSlice.actions;
+export const { setMode, setLogin, setLogout, setItems, setItem, addToCart, removeFromCart, increaseCount, decreaseCount, setIsCartOpen, setCheckOut, removeManyFromCart } = authSlice.actions;
 export default authSlice.reducer;
