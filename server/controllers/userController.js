@@ -37,14 +37,28 @@ const updateCart = async (req, res) => {
 const getAllUser = async (req, res) => {
   try {
     const user = await User.find({});
-    res.json(user);
+    res.json({ data: user });
   } catch (error) {
     res.status(500).json(error);
   }
 };
-
+const getListUser = (req, res) => {
+  try {
+    const { uniqueUserIds } = req.body;
+    User.find({ _id: { $in: uniqueUserIds } })
+      .then((result) => {
+        return res.status(200).json({
+          status: "Ok",
+          message: "ok",
+          data: result,
+        });
+      })
+      .catch((err) => {});
+  } catch (error) {}
+};
 module.exports = {
   getUser,
   getAllUser,
   updateCart,
+  getListUser,
 };

@@ -8,6 +8,8 @@ import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setIsCartOpen, setLogout, setMode } from "state";
+import SearchBar from "./SearchBar";
+import GroupIcon from "@mui/icons-material/Group";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -45,12 +47,10 @@ const Navbar = () => {
           QuangNguyen
         </Typography>
         {isNonMobileScreens && (
-          <FlexBetween backgroundColor={neutralLight} borderRadius='9px' gap='3rem' padding='0.1rem 1.5rem'>
-            <InputBase placeholder='Search...' />
-            <IconButton>
-              <Search />
-            </IconButton>
-          </FlexBetween>
+          <Box>
+            <SearchBar />
+            {/* <SearchList valuesSearch={valuesSearch} open={open} /> */}
+          </Box>
         )}
       </FlexBetween>
 
@@ -75,13 +75,18 @@ const Navbar = () => {
               {user?.role === "admin" && (
                 <FlexBetween gap={"20px"}>
                   <Tooltip title={"Manage Order"}>
-                    <IconButton onClick={() => navigate("/manage/order")}>
+                    <IconButton onClick={() => navigate("/manage/orders")}>
                       <CardMembershipIcon />
                     </IconButton>
                   </Tooltip>
                   <Tooltip title={"Manage Products"}>
-                    <IconButton onClick={() => navigate("/manage/product")}>
+                    <IconButton onClick={() => navigate("/manage/products")}>
                       <PrecisionManufacturingIcon />
+                    </IconButton>
+                  </Tooltip>{" "}
+                  <Tooltip title={"Manage Users"}>
+                    <IconButton onClick={() => navigate("/manage/users")}>
+                      <GroupIcon />
                     </IconButton>
                   </Tooltip>
                 </FlexBetween>
@@ -137,13 +142,33 @@ const Navbar = () => {
           </MenuItem>
 
           {/* MENU ITEMS */}
-          {user ? (
-            <FlexBetween width={"100%"} flexDirection='column' alignItems='center' gap={"20px"}>
+          <FlexBetween width={"100%"} flexDirection='column' alignItems='center' gap={"20px"}>
+            {user ? (
               <FlexBetween display='flex' width={"100%"} flexDirection='column' alignItems='center' justifyContent={"center"} gap={"20px"}>
-                <MenuItem onClick={() => dispatch(setMode())} sx={{ width: "100%", display: "flex", justifyContent: "start" }}>
-                  {theme.palette.mode === "dark" ? <DarkMode sx={{ fontSize: "25px" }} /> : <LightMode sx={{ color: dark, fontSize: "25px" }} />}
-                  <Typography sx={{ ml: "14px" }}> {theme.palette.mode === "dark" ? "Dart Mode" : "Light Mode"}</Typography>
-                </MenuItem>
+                <FormControl variant='standard' value={fullName}>
+                  <Select
+                    value={fullName}
+                    sx={{
+                      backgroundColor: neutralLight,
+                      width: "150px",
+                      borderRadius: "0.25rem",
+                      p: "0.25rem 1rem",
+                      "& .MuiSvgIcon-root": {
+                        pr: "0.25rem",
+                        width: "3rem",
+                      },
+                      "& .MuiSelect-select:focus": {
+                        backgroundColor: neutralLight,
+                      },
+                    }}
+                    input={<InputBase />}
+                  >
+                    <MenuItem value={fullName}>
+                      <Typography>{fullName}</Typography>
+                    </MenuItem>
+                    <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
+                  </Select>
+                </FormControl>
                 <MenuItem
                   onClick={() => {
                     setIsMobileMenuToggled(!isMobileMenuToggled);
@@ -182,39 +207,36 @@ const Navbar = () => {
                   </Box>
                 )}
               </FlexBetween>
-              <FormControl variant='standard' value={fullName}>
-                <Select
-                  value={fullName}
-                  sx={{
-                    backgroundColor: neutralLight,
-                    width: "150px",
-                    borderRadius: "0.25rem",
-                    p: "0.25rem 1rem",
-                    "& .MuiSvgIcon-root": {
-                      pr: "0.25rem",
-                      width: "3rem",
-                    },
-                    "& .MuiSelect-select:focus": {
-                      backgroundColor: neutralLight,
-                    },
-                  }}
-                  input={<InputBase />}
-                >
-                  <MenuItem value={fullName}>
-                    <Typography>{fullName}</Typography>
-                  </MenuItem>
-                  <MenuItem onClick={() => dispatch(setLogout())}>Log Out</MenuItem>
-                </Select>
-              </FormControl>
-            </FlexBetween>
-          ) : (
-            <FlexBetween display='flex' flexDirection='column' justifyContent='start' alignItems='center' gap='3rem'>
-              <IconButton onClick={() => dispatch(setMode())} sx={{ fontSize: "25px" }}>
-                {theme.palette.mode === "dark" ? <DarkMode sx={{ fontSize: "25px" }} /> : <LightMode sx={{ color: dark, fontSize: "25px" }} />}
-              </IconButton>
+            ) : (
+              <MenuItem
+                onClick={() => {
+                  navigate("/login");
+                  setTimeout(() => {
+                    setIsMobileMenuToggled(!isMobileMenuToggled);
+                  }, 150);
+                }}
+                sx={{ width: "100%", display: "flex", justifyContent: "start" }}
+              >
+                <LoginIcon sx={{ color: dark, fontSize: "25px" }} />
+                <Typography sx={{ ml: "14px" }}>Log In</Typography>
+              </MenuItem>
+            )}
+
+            <MenuItem onClick={() => dispatch(setMode())} sx={{ width: "100%", display: "flex", justifyContent: "start" }}>
+              {theme.palette.mode === "dark" ? <DarkMode sx={{ fontSize: "25px" }} /> : <LightMode sx={{ color: dark, fontSize: "25px" }} />}
               <Typography sx={{ ml: "14px" }}> {theme.palette.mode === "dark" ? "Dart Mode" : "Light Mode"}</Typography>
-            </FlexBetween>
-          )}
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                navigate("/search");
+                setIsMobileMenuToggled(!isMobileMenuToggled);
+              }}
+              sx={{ width: "100%", display: "flex", justifyContent: "start" }}
+            >
+              <Search />
+              <Typography sx={{ ml: "14px" }}>Search</Typography>
+            </MenuItem>
+          </FlexBetween>
         </Box>
       )}
     </FlexBetween>

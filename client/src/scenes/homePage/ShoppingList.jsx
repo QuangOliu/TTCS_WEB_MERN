@@ -6,22 +6,25 @@ import useMediaQuery from "@mui/material/useMediaQuery";
 import productApi from "api/productApi";
 import { useEffect, useState } from "react";
 import Item from "../../components/Item";
+import { useDispatch } from "react-redux";
+import { setProducts } from "state";
 
 const ShoppingList = () => {
   const [value, setValue] = useState("all");
   const [items, setItems] = useState([]);
-  // const items = useSelector((state) => state.items);
 
   const breakPoint = useMediaQuery("(min-width: 1000px)");
+  const dispatch = useDispatch();
 
   useEffect(() => {
     productApi
       .getAllProduct()
       .then((result) => {
         setItems(result);
+        dispatch(setProducts(result));
       })
       .catch((err) => {
-        console.log(err)
+        console.log(err);
       });
   }, []);
 
@@ -35,7 +38,7 @@ const ShoppingList = () => {
   const bestSellersItems = items.filter((item) => item.category === "fall");
 
   return (
-    <Box width='80%' margin='80px auto'>
+    <Box margin='80px auto'>
       <Typography variant='h3' textAlign='center'>
         Our Featured <b>Products</b>
       </Typography>

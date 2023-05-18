@@ -86,8 +86,7 @@ const getListItem = async (req, res) => {
 const likeProduct = async (req, res) => {
   try {
     const { id } = req.params;
-    const { userId } = req.body;
-
+    const userId = req.user._id;
     const product = await Product.findById(id);
     const isLiked = product.likes.get(userId);
 
@@ -193,6 +192,45 @@ const updateProduct = (req, res) => {
     });
 };
 
+const addComment = async (req, res) => {
+  try {
+    const { productId } = req.params;
+    const userId = req.user._id;
+    const { comment } = req.body;
+
+    const product = await Product.findById(productId);
+    if (product) {
+      product.comments.push({ userId, comment, timestamp: Date.now() });
+      await product.save();
+    }
+    return res.json({
+      status: "oke",
+      message: "add comment ok",
+      data: product,
+    });
+  } catch (error) {}
+};
+
+const searchPd = async (req, res) => {
+  try {
+    const searchQuery = req.query.query;
+    const products = await Product.find({
+      $or: [{ name: { $regex: searchQuery, $options: "i" } }, { category: { $regex: searchQuery, $options: "i" } }, { longDescription: { $regex: searchQuery, $options: "i" } }],
+    })
+      .sort({ name: -1 })
+      .exec();
+
+    return res.json({
+      data: products,
+      status: "oke",
+      message: "oke",
+    });
+  } catch (error) {
+    // Xử lý lỗi
+    return res.json(error);
+  }
+};
+
 module.exports = {
   createProduct,
   likeProduct,
@@ -203,4 +241,6 @@ module.exports = {
   deleteProducts,
   updateQuantities,
   deleteProductById,
+  addComment,
+  searchPd,
 };

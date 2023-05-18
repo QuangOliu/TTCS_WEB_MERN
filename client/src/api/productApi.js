@@ -33,10 +33,19 @@ const productApi = {
     const url = `/product/${data}`;
     return axiosClient.delete(url);
   },
-  pathLike(id, userId) {
+  pathLike(id) {
     // :id/like
     const url = `/product/${id}/like`;
-    return axiosClient.patch(url, { userId });
+    return axiosClient.patch(url);
+  },
+  addComment(productId, comment) {
+    const url = `/product/${productId}/comment`;
+    return axiosClient.patch(url, { comment });
+  },
+  search(key) {
+    // console.log(key);
+    const url = `/product/search?query=${key}`;
+    return axiosClient.get(url);
   },
 };
 

@@ -75,7 +75,7 @@ const Checkout = () => {
       <Aleart title={"Success"} messsage={"You have successfully made an Order — Congrats on Making your Purchase"} open={open} setOpen={setOpen} />
       {loadding === false ? (
         cart.length > 0 ? (
-          <Box width='80%' m='100px auto'>
+          <Box m='100px auto'>
             <Box>
               {cart.map((item) => {
                 return (
@@ -184,7 +184,7 @@ const Checkout = () => {
             </Box>
           </Box>
         ) : (
-          <Box width='80%' m='100px auto'>
+          <Box m='100px auto'>
             <Typography fontWeight='500' variant='h5' sx={{ mb: "1.5rem" }}>
               Bạn chưa có sản phẩm nào trong cửa hàng <br />
               Hãy cùng trải nghiệm những sản phẩm của chúng tôi
@@ -207,7 +207,7 @@ const Checkout = () => {
           </Box>
         )
       ) : (
-        <Box width='80%' m='100px auto' sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
+        <Box m='100px auto' sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
           <CircularProgress color='inherit' />
         </Box>
       )}

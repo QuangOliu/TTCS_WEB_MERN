@@ -19,7 +19,9 @@ import LoginPage from "scenes/loginPage";
 import ProductCreate from "scenes/productCreate";
 import ProductDetail from "scenes/productDetail";
 import ProfilePage from "scenes/profilePage";
+import SearchPage from "scenes/searchPage";
 import { themeSettings } from "./theme";
+import ManageUser from "scenes/Admin/ManageUser";
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -54,22 +56,27 @@ function App() {
             <Routes>
               <Route path='/' element={<HomePage />} />
               <Route path='/login' element={<LoginPage />} />
-              <Route path='/profile/:userId' element={isAuth ? <ProfilePage /> : <Navigate to='/login' />} />
-              <Route path='checkout' element={<Checkout />} />
+              <Route path='/user/:userId' element={isAuth ? <ProfilePage /> : <Navigate to='/login' />} />
+              <Route path='/checkout' element={<Checkout />} />
+              <Route path='/search' element={<SearchPage />} />
               <Route path='/product/:productId' element=<ProductDetail /> />
 
               {isAdmin && (
                 <Route path='/manage'>
-                  <Route path='order'>
+                  <Route path='orders'>
                     <Route path=':orderId' element={<OrderDetail />} />
                     <Route index element=<ManageOrder /> />
                   </Route>
 
-                  <Route path='product'>
+                  <Route path='products'>
                     <Route path='create' element={<ProductCreate />} />
                     {/* /manager/product/edit/64592e83c8f3ac1943abf33c */}
                     <Route path='edit/:productId' element={<EditProduct />} />
                     <Route index element={<ManageProduct />} />
+                  </Route>
+
+                  <Route path='users'>
+                    <Route index element={<ManageUser />} />
                   </Route>
 
                   <Route index element={<ManageDashboad />} />

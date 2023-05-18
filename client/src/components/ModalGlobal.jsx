@@ -71,7 +71,7 @@ function ModalGlobal({ open, setOpen, title, message, btn }) {
               onClick={() => {
                 setOpen(false);
               }}
-              sx={{ m: "1rem 0", p: "1rem", backgroundColor: shades.primary[300], color: "white" }}
+              sx={{ m: "1rem 0", p: "1rem", backgroundColor: shades.primary[300], color: "white", "&:hover": { color: "black" } }}
             >
               Hủy
             </Button>

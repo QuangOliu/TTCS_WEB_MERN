@@ -68,7 +68,6 @@ export default function Form() {
     for (let value in values) {
       formData.append(value, values[value]);
     }
-    // formData.append("picturePath", values.picture.name);
 
     const savedUserResponse = await fetch("http://localhost:4000/auth/register", {
       method: "POST",

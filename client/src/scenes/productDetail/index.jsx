@@ -15,6 +15,7 @@ import Item from "../../components/Item";
 import { addToCart } from "../../state";
 import { shades } from "../../theme";
 import Review from "./Review";
+import ListComment from "./ListComment";
 
 const ProductDetail = () => {
   const { palette } = useTheme();
@@ -24,7 +25,8 @@ const ProductDetail = () => {
   const [value, setValue] = useState("description");
   const [count, setCount] = useState(1);
   const [item, setItem] = useState();
-  const [isLiked, setIsLiked] = useState(false);
+  const [comments, setComments] = useState([]);
+  const [isLiked, setIsLiked] = useState(true);
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -38,15 +40,17 @@ const ProductDetail = () => {
 
   const items = useSelector((state) => state.items);
   const isAuth = Boolean(useSelector((state) => state.token));
-  const userId = useSelector((state) => state.user._id);
+  const userId = useSelector((state) => state.user?._id);
 
   const patchLike = () => {
-    productApi
-      .pathLike(productId, userId)
-      .then((result) => {
-        setIsLiked(Boolean(result?.likes[userId]));
-      })
-      .catch((err) => {});
+    if (isAuth) {
+      productApi
+        .pathLike(productId)
+        .then((result) => {
+          setIsLiked(Boolean(result?.likes[userId]));
+        })
+        .catch((err) => {});
+    }
   };
 
   useEffect(() => {
@@ -54,6 +58,7 @@ const ProductDetail = () => {
       .getProductById(productId)
       .then((result) => {
         setItem(result);
+        setComments(result.comments);
         setIsLiked(Boolean(result?.likes[userId]));
       })
       .catch((err) => {});
@@ -61,7 +66,7 @@ const ProductDetail = () => {
 
   return (
     <Box>
-      <Box width='80%' m='80px auto'>
+      <Box m='80px auto'>
         <Box display='flex' flexWrap='wrap' columnGap='40px'>
           {/* IMAGES */}
           <Box flex='1 1 40%' mb='40px'>
@@ -129,7 +134,18 @@ const ProductDetail = () => {
               </Button>
             </Box>
             <Box cursor='pointer'>
-              <Box m='20px 0 5px 0' display='flex' alignItems={"center"} onClick={patchLike}>
+              <Box
+                m='20px 0 5px 0'
+                display='flex'
+                alignItems={"center"}
+                onClick={() => {
+                  if (isAuth) {
+                    patchLike();
+                  } else {
+                    setOpen(true);
+                  }
+                }}
+              >
                 {" "}
                 <IconButton>{isLiked ? <FavoriteOutlined sx={{ color: "red" }} /> : <FavoriteBorderOutlined />}</IconButton>
                 <Typography sx={{ ml: "5px", textAlign: "center" }}>ADD TO WISHLIST</Typography>
@@ -143,15 +159,17 @@ const ProductDetail = () => {
         <Box m='20px 0'>
           <Tabs value={value} onChange={handleChange}>
             <Tab label='DESCRIPTION' value='description' />
-            <Tab label='REVIEWS' value='reviews' />
+            <Tab label='COMMENTS' value='reviews' />
           </Tabs>
         </Box>
         <Box display='flex' flexWrap='wrap' gap='15px'>
           {value === "description" && <div>{item?.longDescription}</div>}
           {value === "reviews" && (
-            <div>
-              <Review />
-            </div>
+            <Box width={"100%"}>
+              <ListComment comments={comments} />
+              <Box height={"20px"} />
+              <Review productId={productId} setComments={setComments} />
+            </Box>
           )}
         </Box>
 
