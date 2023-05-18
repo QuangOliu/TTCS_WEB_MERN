@@ -167,6 +167,19 @@ const thongke = (req, res) => {
     return res.json(error);
   }
 };
+
+const thongkeDoanhThu = (req, res) => {
+  try {
+    Order.find()
+      .then((result) => {
+        const salesByMonth = getSalesByMonth(result);
+        res.json(salesByMonth);
+      })
+      .catch((err) => {});
+  } catch (error) {
+    return res.json(error);
+  }
+};
 const getOrdersByUserId = (req, res) => {
   try {
     const { userId } = req.params;
@@ -210,6 +223,32 @@ function getProductSalesByMonth(productId, orders) {
 
   return productSalesByMonth;
 }
+
+function getSalesByMonth(orders) {
+  // Tạo một đối tượng để lưu trữ kết quả thống kê
+  const productSalesByMonth = {};
+
+  const months = ["Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6", "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"];
+  for (const month of months) {
+    if (!productSalesByMonth[month]) {
+      productSalesByMonth[month] = 0;
+    }
+  }
+
+  // Lặp qua từng đơn hàng
+  for (const order of orders) {
+    // Lấy tháng từ createdAt
+    const month = new Date(order.createdAt).getMonth() + 1;
+
+    // Kiểm tra nếu đơn hàng có chứa sản phẩm có productId
+    const doanhthu = order.items.reduce((acc, item) => {
+      return acc + item.price * item.count;
+    }, 0);
+    productSalesByMonth[`Tháng ${month}`] += doanhthu;
+  }
+
+  return productSalesByMonth;
+}
 module.exports = {
   addOrder,
   getOrders,
@@ -218,4 +257,5 @@ module.exports = {
   deleteMany,
   thongke,
   getOrdersByUserId,
+  thongkeDoanhThu,
 };

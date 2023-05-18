@@ -17,7 +17,7 @@ const Subscribe = () => {
   const isNonMobile = useMediaQuery("(min-width:600px)");
 
   return (
-    <Box margin='80px auto' textAlign='center'>
+    <Box margin='0 auto' textAlign='center'>
       <IconButton>
         <MarkEmailReadOutlinedIcon fontSize='large' />
       </IconButton>

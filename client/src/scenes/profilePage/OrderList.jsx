@@ -20,7 +20,7 @@ function OrderList({ ordersByStatus }) {
               <Box
                 key={`${item._id}`}
                 onClick={() => {
-                  navigate(`/manage/order/${item._id}`);
+                  navigate(`/orders/${item._id}`);
                 }}
                 sx={{
                   "&:hover": {

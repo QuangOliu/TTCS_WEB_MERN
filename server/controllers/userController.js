@@ -56,9 +56,40 @@ const getListUser = (req, res) => {
       .catch((err) => {});
   } catch (error) {}
 };
+
+
+const deleteUsers = async (req, res) => {
+  try {
+    const { selected } = req.body;
+    // return res.json(selected);
+    User.deleteMany({ _id: { $in: selected } })
+      .then((result) => {
+        res.json({
+          data: result,
+          status: "ok",
+          message: "delete Success",
+        });
+      })
+      .catch((err) => {
+        res.json({
+          data: "",
+          status: "false",
+          message: "Delete False",
+        });
+      });
+  } catch (error) {
+    res.json({
+      data: "",
+      status: "flase",
+      message: "delete fails",
+    });
+  }
+};
+
 module.exports = {
   getUser,
   getAllUser,
   updateCart,
   getListUser,
+  deleteUsers
 };

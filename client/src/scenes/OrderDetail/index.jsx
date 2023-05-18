@@ -29,6 +29,7 @@ function OrderDetail() {
       .then((result) => {
         setItems(result.data.items);
         setData(result.data);
+        console.log(result.data)
       })
       .catch((err) => {});
   }, [orderId]);
@@ -69,7 +70,7 @@ function OrderDetail() {
             <strong style={{ minWidth: "150px", display: "block" }}>Order ID:</strong> <span id='order-id'>{data._id}</span>
           </Typography>
           <Typography sx={{ lineHeight: "1.5", gridColumn: "span 2", textAlign: "left", mb: "20px" }}>
-            <strong style={{ minWidth: "150px", display: "block" }}>User ID:</strong> <Link to={`/profile/${data.userId}`}>{data.userId}</Link>
+            <strong style={{ minWidth: "150px", display: "block" }}>User ID:</strong> <Link to={`/user/${data.userId}`}>{data.userId}</Link>
           </Typography>
           <Typography sx={{ lineHeight: "1.5", gridColumn: "span 2", textAlign: "left", mb: "20px" }}>
             <strong style={{ minWidth: "150px", display: "block" }}>User Name:</strong> <span id='name'>{data.name}</span>
@@ -96,7 +97,7 @@ function OrderDetail() {
           {isAdmin && (
             <Button
               fullWidth
-              disabled={data?.status !== 4}
+              disabled={data.status === 4}
               sx={{
                 m: "1rem 0 0 0",
                 p: "1rem",

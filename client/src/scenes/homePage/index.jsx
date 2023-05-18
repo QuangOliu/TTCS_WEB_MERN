@@ -7,6 +7,7 @@ const HomePage = () => {
   return (
     <Box>
       <MainCarousel />
+      <Box mb={"80px"} />
       <ShoppingList />
       <Subscribe />
     </Box>

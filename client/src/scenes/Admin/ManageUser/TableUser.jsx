@@ -52,7 +52,6 @@ const head = [
   },
 ];
 function TableUsers({ data, btn, submitDelete }) {
-  console.log(data);
   const [selected, setSelected] = useState([]);
   const [selectedOne, setSelectedOne] = useState();
   const [open, setOpen] = useState(false);
@@ -64,9 +63,12 @@ function TableUsers({ data, btn, submitDelete }) {
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
-      const newSelected = data.map((n) => n._id);
+      const x = data.filter((n) => {
+        return n.role !== "admin";
+      });
+      const newSelected = x.map((n) => n._id);
+      console.log({ newSelected });
       setSelected(newSelected);
-      console.log("newSelected: ", newSelected);
       return;
     }
     setSelected([]);
@@ -183,13 +185,19 @@ function TableUsers({ data, btn, submitDelete }) {
                   return (
                     <StyledTableRow key={row._id}>
                       {submitDelete && (
-                        <StyledTableCell align='left' onClick={(event) => handleClick(event, row._id)}>
+                        <StyledTableCell
+                          align='left'
+                          onClick={(event) => {
+                            if (row.role !== "admin") handleClick(event, row._id);
+                          }}
+                        >
                           <Checkbox
                             color='primary'
                             sx={{
                               backgroundColor: "white",
                             }}
                             checked={isItemSelected}
+                            disabled={row.role === "admin"}
                           />
                         </StyledTableCell>
                       )}
@@ -206,11 +214,12 @@ function TableUsers({ data, btn, submitDelete }) {
                         <IconButton
                           aria-label='delete'
                           size='large'
+                          disabled={row.role === "admin"}
                           onClick={(e) => {
-                            // handleClick(e, row._id);
-                            setSelectedOne(row._id);
-                            handleClickOpen();
-                            // handleClickDeleteIcon([row._id]);
+                            if (row.role !== "admin") {
+                              setSelectedOne(row._id);
+                              handleClickOpen();
+                            }
                           }}
                           sx={{
                             m: "2rem 0",

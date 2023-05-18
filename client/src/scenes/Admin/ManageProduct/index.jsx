@@ -7,7 +7,7 @@ import { removeManyFromCart, setItems } from "state";
 
 const btn = {
   title: "Thêm sản phẩm mới",
-  linkTo: "/manage/product/create",
+  linkTo: "/manage/products/create",
 };
 function ManageDashboad() {
   const [data, setData] = useState([]);

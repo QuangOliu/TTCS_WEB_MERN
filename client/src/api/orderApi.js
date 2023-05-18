@@ -25,6 +25,11 @@ const orderApi = {
     const url = `/order/thongke/${productId}`;
     return axiosClient.get(url);
   },
+  // thongke/doanhso
+  thongkedoanhso() {
+    const url = `/order/thongke/doanhso`;
+    return axiosClient.get(url);
+  },
   getOrderByUserId(userId) {
     const url = `/order/user/${userId}`;
     return axiosClient.get(url);

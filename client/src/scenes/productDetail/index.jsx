@@ -98,6 +98,7 @@ const ProductDetail = () => {
               <Typography variant='h3'>{item?.name}</Typography>
               <Typography>Price: ${item?.price}</Typography>
               <Typography>Quantity: {item?.quantity}</Typography>
+              <Typography>Sales: {item?.sales}</Typography>
               <Typography sx={{ mt: "20px" }}>{item?.longDescription}</Typography>
             </Box>
 

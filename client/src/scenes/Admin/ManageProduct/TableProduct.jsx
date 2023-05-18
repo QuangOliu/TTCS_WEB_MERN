@@ -70,7 +70,6 @@ const head = [
   },
 ];
 function TableProduct({ data, btn, submitDelete }) {
-  console.log(data);
   const [selected, setSelected] = useState([]);
   const [selectedOne, setSelectedOne] = useState();
   const [open, setOpen] = useState(false);
@@ -84,7 +83,6 @@ function TableProduct({ data, btn, submitDelete }) {
     if (event.target.checked) {
       const newSelected = data.map((n) => n._id);
       setSelected(newSelected);
-      console.log("newSelected: ", newSelected);
       return;
     }
     setSelected([]);
@@ -110,7 +108,6 @@ function TableProduct({ data, btn, submitDelete }) {
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const handleClickDeleteIcon = (selected) => {
-    console.log(selected);
     submitDelete(selected);
   };
 

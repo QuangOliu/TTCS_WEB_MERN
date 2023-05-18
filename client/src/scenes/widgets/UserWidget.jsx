@@ -57,7 +57,7 @@ const UserWidget = ({ userId, picturePath, selectedIndex, setSelectedIndex, orde
   return (
     <Box sx={{ bgcolor: "background.paper" }}>
       {/* FIRST ROW */}
-      <FlexBetween gap='0.5rem' p='1rem' onClick={() => navigate(`/profile/${userId}`)}>
+      <FlexBetween gap='0.5rem' p='1rem' onClick={() => navigate(`/user/${userId}`)}>
         <FlexBetween gap='1rem'>
           <UserImage image={picturePath} />
           <Box>

@@ -59,7 +59,7 @@ function ManageOrder() {
 
         setData((data) => {
           return data.map((item) => {
-            item.linkTo = `/manage/order/${item._id}`;
+            item.linkTo = `/orders/${item._id}`;
             return item;
           });
         });

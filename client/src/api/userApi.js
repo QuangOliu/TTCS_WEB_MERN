@@ -13,6 +13,11 @@ const userApi = {
     const url = "/user";
     return axiosClient.get(url);
   },
+  
+  deleteUsers(data) {
+    const url = "/user/deletemany";
+    return axiosClient.delete(url, { data });
+  },
 };
 
 export default userApi;

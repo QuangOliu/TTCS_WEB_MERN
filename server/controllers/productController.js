@@ -55,7 +55,7 @@ const getProductById = async (req, res) => {
 // READ POSTS FOR FEED
 const getFeedProduct = async (req, res) => {
   try {
-    let products = await Product.find().sort([["createdAt", 1]]);
+    let products = await Product.find().sort({ sales: -1 });
 
     res.status(200).json(products);
   } catch (error) {

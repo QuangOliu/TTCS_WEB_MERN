@@ -8,7 +8,7 @@ import TableUsers from "./TableUser";
 
 const btn = {
   title: "Thêm người dùng mới",
-  linkTo: "/manage/users,/create",
+  linkTo: "/manage/users/create",
 };
 function ManageUser() {
   const [data, setData] = useState([]);
@@ -36,8 +36,8 @@ function ManageUser() {
     const formData = {
       selected: selected,
     };
-    productApi
-      .deleteProducts(formData)
+    userApi
+      .deleteUsers(formData)
       .then((result) => {
         const newData = data.filter((item) => {
           return !selected.includes(item._id);

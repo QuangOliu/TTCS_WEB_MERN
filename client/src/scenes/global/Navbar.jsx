@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import { setIsCartOpen, setLogout, setMode } from "state";
 import SearchBar from "./SearchBar";
 import GroupIcon from "@mui/icons-material/Group";
+import PersonIcon from "@mui/icons-material/Person";
 
 const Navbar = () => {
   const [isMobileMenuToggled, setIsMobileMenuToggled] = useState(false);
@@ -64,10 +65,17 @@ const Navbar = () => {
                   {theme.palette.mode === "dark" ? <DarkMode sx={{ fontSize: "25px" }} /> : <LightMode sx={{ color: dark, fontSize: "25px" }} />}
                 </IconButton>
               </Tooltip>
-              <Tooltip title={"Bag"}>
+              <Tooltip title={"Giỏ hàng"}>
                 <IconButton onClick={() => dispatch(setIsCartOpen({}))}>
                   <Badge badgeContent={cart.length} invisible={cart.length === 0} sx={{ fontSize: "25px" }}>
                     <ShoppingBagOutlined />
+                  </Badge>
+                </IconButton>
+              </Tooltip>
+              <Tooltip title={"Trang cá nhân"}>
+                <IconButton onClick={() => navigate(`/user/${user._id}`)}>
+                  <Badge badgeContent={cart.length} invisible={cart.length === 0} sx={{ fontSize: "25px" }}>
+                    <PersonIcon />
                   </Badge>
                 </IconButton>
               </Tooltip>
@@ -181,13 +189,23 @@ const Navbar = () => {
                   </Badge>
                   <Typography sx={{ ml: "14px" }}>Badge</Typography>
                 </MenuItem>
+                <MenuItem
+                  onClick={() => {
+                    setIsMobileMenuToggled(!isMobileMenuToggled);
+                    navigate(`/user/${user._id}`);
+                  }}
+                  sx={{ width: "100%", display: "flex", justifyContent: "start" }}
+                >
+                  <PersonIcon sx={{ fontSize: "25px" }} />
+                  <Typography sx={{ ml: "14px" }}>Profile</Typography>
+                </MenuItem>
 
                 {user?.role === "admin" && (
                   <Box width={"100%"} display='flex' flexDirection='column' alignItems='center' justifyContent={"start"} gap={"20px"}>
                     <MenuItem
                       onClick={() => {
                         setIsMobileMenuToggled(!isMobileMenuToggled);
-                        navigate("/manage/order");
+                        navigate("/manage/orders");
                       }}
                       sx={{ width: "100%", display: "flex", justifyContent: "start" }}
                     >
@@ -197,12 +215,22 @@ const Navbar = () => {
                     <MenuItem
                       onClick={() => {
                         setIsMobileMenuToggled(!isMobileMenuToggled);
-                        navigate("/manage/product");
+                        navigate("/manage/products");
                       }}
                       sx={{ width: "100%", display: "flex", justifyContent: "start" }}
                     >
                       <PrecisionManufacturingIcon sx={{ fontSize: "25px" }} />
                       <Typography sx={{ ml: "14px" }}>Manage Product</Typography>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => {
+                        setIsMobileMenuToggled(!isMobileMenuToggled);
+                        navigate("/manage/users");
+                      }}
+                      sx={{ width: "100%", display: "flex", justifyContent: "start" }}
+                    >
+                      <GroupIcon sx={{ fontSize: "25px" }} />
+                      <Typography sx={{ ml: "14px" }}>Manage Users</Typography>
                     </MenuItem>
                   </Box>
                 )}
