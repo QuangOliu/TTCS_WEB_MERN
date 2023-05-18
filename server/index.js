@@ -18,7 +18,7 @@ const { register } = require("./controllers/authController");
 const { createProduct } = require("./controllers/productController");
 const { verifyToken, checkAdmin } = require("./middleware/authMiddleware");
 const Product = require("./models/Product");
-const { products } = require("./data/index");
+const { products, categorys } = require("./data/index");
 const Category = require("./models/Category");
 const app = express();
 dotenv.config();
@@ -61,14 +61,15 @@ app.use("/product", productRoutes);
 app.use("/order", orderRoute);
 // DATA BASE CONNECT
 mongoose
-  // .connect(process.env.MONGO_URL)
-  .connect("mongodb://localhost:27017/social-media")
+  .connect(process.env.MONGO_URL)
+  // .connect("mongodb://localhost:27017/social-media")
   .then(() => {
     // console.log(app._router.stack.filter((r) => r.route));
     app.listen(process.env.PORT, () => {
       console.log(`Example app listening on port ${process.env.PORT}`);
       // User.insertMany(users);
       // Product.insertMany(products);
+      // Category.insertMany(categorys);
     });
   })
   .catch((err) => {

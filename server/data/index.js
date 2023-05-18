@@ -271,4 +271,20 @@ const products = [
     updatedBy: null,
   },
 ];
-module.exports = { products };
+
+const categorys = [
+  {
+    name: "Spring",
+    slug: "spring",
+  },
+  {
+    name: "Fall",
+    slug: "fall",
+  },
+  {
+    name: "New Arrivals",
+    slug: "newArrivals",
+  },
+];
+
+module.exports = { products, categorys };
