@@ -74,9 +74,7 @@ const Navbar = () => {
               </Tooltip>
               <Tooltip title={"Trang cá nhân"}>
                 <IconButton onClick={() => navigate(`/user/${user._id}`)}>
-                  <Badge badgeContent={cart.length} invisible={cart.length === 0} sx={{ fontSize: "25px" }}>
-                    <PersonIcon />
-                  </Badge>
+                  <PersonIcon />
                 </IconButton>
               </Tooltip>
 
