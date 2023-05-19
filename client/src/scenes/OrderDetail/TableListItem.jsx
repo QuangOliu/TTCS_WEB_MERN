@@ -29,7 +29,7 @@ function TableListItem({ arrIdOfItem }) {
     <div>
       {items.map((item) => {
         return (
-          <Box sx={{ cursor: "pointer", "&:hover": { backgroundColor: neutralLight } }} key={`${item._id}`} onClick={() => navigate(`/product/${item._id}`)}>
+          <Box sx={{ cursor: "pointer", "&:hover": { backgroundColor: neutralLight } }} key={`${item._id}`} onClick={() => navigate(`/products/${item._id}`)}>
             <FlexBetween p='15px 0'>
               <Box mr={"30px"}>
                 <img alt={item?.name} width='123px' height='164px' src={`http://localhost:4000/assets/${item.images[0]}`} />

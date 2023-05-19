@@ -21,7 +21,7 @@ function ManageDashboad() {
         setData(result);
         setData((data) => {
           return data.map((item) => {
-            item.linkTo = `/statistical/product/${item._id}`;
+            item.linkTo = `/statistical/products/${item._id}`;
             return item;
           });
         });

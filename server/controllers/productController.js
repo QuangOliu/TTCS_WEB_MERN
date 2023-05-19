@@ -174,22 +174,26 @@ const updateQuantities = (req, res) => {
 };
 
 const updateProduct = (req, res) => {
-  const { productId } = req.params;
-  Product.findOneAndUpdate(productId, req.body, { new: true })
-    .then((result) => {
-      return res.status(200).json({
-        data: result,
-        status: "ok",
-        message: "update product success",
+  try {
+    const { productId } = req.params;
+    Product.findOneAndUpdate({ _id: productId }, req.body, { new: true })
+      .then((result) => {
+        return res.status(200).json({
+          data: result,
+          status: "ok",
+          message: "update product success",
+        });
+      })
+      .catch((err) => {
+        return res.status(500).json({
+          status: 500,
+          message: "Some thing wrong when update product",
+          data: "",
+        });
       });
-    })
-    .catch((err) => {
-      return res.status(500).json({
-        status: 500,
-        message: "Some thing wrong when update product",
-        data: "",
-      });
-    });
+  } catch (error) {
+    return res.json(error);
+  }
 };
 
 const addComment = async (req, res) => {

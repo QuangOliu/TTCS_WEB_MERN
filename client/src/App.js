@@ -61,7 +61,7 @@ function App() {
               <Route path='/user/:userId/edit' element={isAuth ? <EditProfile /> : <Navigate to='/login' />} />
               <Route path='/checkout' element={<Checkout />} />
               <Route path='/search' element={<SearchPage />} />
-              <Route path='/product/:productId' element=<ProductDetail /> />
+              <Route path='/products/:productId' element=<ProductDetail /> />
               
               <Route path='/orders'>
                     <Route path=':orderId' element={<OrderDetail />} />
@@ -74,7 +74,7 @@ function App() {
 
                   <Route path='products'>
                     <Route path='create' element={<ProductCreate />} />
-                    {/* /manage/product/edit/64592e83c8f3ac1943abf33c */}
+                    {/* /manage/products/edit/64592e83c8f3ac1943abf33c */}
                     <Route path='edit/:productId' element={<EditProduct />} />
                     <Route index element={<ManageProduct />} />
                   </Route>
@@ -89,7 +89,7 @@ function App() {
               )}
               {isAdmin && (
                 <Route path='/statistical'>
-                  <Route path='product'>
+                  <Route path='products'>
                     <Route path=':productId' element={<StatisticalProduct />}></Route>
                   </Route>
                 </Route>

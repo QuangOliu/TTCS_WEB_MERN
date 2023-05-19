@@ -86,22 +86,23 @@ export default function CreateOrEditProduct({ productId }) {
       productApi
         .updateProduct(productId, values)
         .then((result) => {
-          setInitialValues((prevValues) => ({
-            ...prevValues,
-            name: result.data.name,
-            category: result.data.category,
-            shortDescription: result.data.shortDescription,
-            longDescription: result.data.longDescription,
-            quantity: result.data.quantity,
-            price: result.data.price,
-            images: result.data.images,
-            productImages: result.data.images,
-          }));
+          console.log(result);
+          // setInitialValues((prevValues) => ({
+          //   ...prevValues,
+          //   name: result.data.name,
+          //   category: result.data.category,
+          //   shortDescription: result.data.shortDescription,
+          //   longDescription: result.data.longDescription,
+          //   quantity: result.data.quantity,
+          //   price: result.data.price,
+          //   images: result.data.images,
+          //   productImages: result.data.images,
+          // }));
           setOpen(true);
           onSubmitProps.resetForm();
           dispatch(setItem(result.data));
           setTimeout(() => {
-            navigate("/manage/product");
+            navigate("/manage/products");
           }, 1000);
         })
         .catch((err) => {

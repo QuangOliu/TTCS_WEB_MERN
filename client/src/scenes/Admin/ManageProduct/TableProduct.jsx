@@ -244,7 +244,7 @@ function TableProduct({ data, btn, submitDelete }) {
                       <StyledTableCell align='left'>
                         <IconButton
                           onClick={() => {
-                            navigate(`/manage/product/edit/${row._id}`);
+                            navigate(`/manage/products/edit/${row._id}`);
                           }}
                           size='large'
                           sx={{

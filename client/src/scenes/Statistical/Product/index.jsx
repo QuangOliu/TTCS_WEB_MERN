@@ -38,8 +38,8 @@ function StatisticalProduct() {
         
         setProduct((data) => {
           return data.map((item) => {
-            item.linkTo = `/product/${item._id}`;
-            // item.linkTo = `/product/${item._id}`;
+            item.linkTo = `/products/${item._id}`;
+            // item.linkTo = `/products/${item._id}`;
             return item;
           });
         });
