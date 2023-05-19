@@ -70,7 +70,7 @@ const ProductDetail = () => {
         <Box display='flex' flexWrap='wrap' columnGap='40px'>
           {/* IMAGES */}
           <Box flex='1 1 40%' mb='40px'>
-            <img alt={item?.name} width='100%' height='100%' src={`http://localhost:4000/assets/${item?.images[0]}`} style={{ objectFit: "contain" }} />
+            <img alt={item?.name} width='100%' height='100%' src={`https://server-ttcs.onrender.com/assets/${item?.images[0]}`} style={{ objectFit: "contain" }} />
           </Box>
 
           {/* ACTIONS */}

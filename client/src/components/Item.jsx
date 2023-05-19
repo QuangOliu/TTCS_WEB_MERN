@@ -35,7 +35,7 @@ const Item = ({ item, width }) => {
 
       <Box position='relative' onMouseOver={() => setIsHovered(true)} onMouseOut={() => setIsHovered(false)}>
         <Box sx={{ width: "300px", height: "400px" }}>
-          <img alt={item.name} width='300px' height='400px' src={`http://localhost:4000/assets/${url}`} onClick={() => navigate(`/products/${item._id}`)} style={{ cursor: "pointer" }} />
+          <img alt={item.name} width='300px' height='400px' src={`https://server-ttcs.onrender.com/assets/${url}`} onClick={() => navigate(`/products/${item._id}`)} style={{ cursor: "pointer" }} />
         </Box>
         <Box display={isHovered ? "block" : "none"} position='absolute' bottom='10%' left='0' width='100%' padding='0 5%'>
           <Box display='flex' justifyContent='space-between'>

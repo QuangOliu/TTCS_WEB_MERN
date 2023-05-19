@@ -22,6 +22,7 @@ const ProfilePage = () => {
     userApi
       .getUserById(userId)
       .then((result) => {
+        console.log(result);
         setUser(result);
       })
       .catch((err) => {

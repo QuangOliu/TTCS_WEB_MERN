@@ -32,7 +32,7 @@ function TableListItem({ arrIdOfItem }) {
           <Box sx={{ cursor: "pointer", "&:hover": { backgroundColor: neutralLight } }} key={`${item._id}`} onClick={() => navigate(`/products/${item._id}`)}>
             <FlexBetween p='15px 0'>
               <Box mr={"30px"}>
-                <img alt={item?.name} width='123px' height='164px' src={`http://localhost:4000/assets/${item.images[0]}`} />
+                <img alt={item?.name} width='123px' height='164px' src={`https://server-ttcs.onrender.com/assets/${item.images[0]}`} />
               </Box>
               <Box flex='1 1 60%'>
                 <FlexBetween mb='5px'>
