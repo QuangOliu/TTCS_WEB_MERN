@@ -65,7 +65,7 @@ mongoose
   // .connect("mongodb://localhost:27017/social-media")
   .then(() => {
     // console.log(app._router.stack.filter((r) => r.route));
-    app.listen(process.env.PORT|| 4000, () => {
+    app.listen(process.env.PORT || 4000, () => {
       console.log(`Example app listening on port ${process.env.PORT || 4000}`);
       // User.insertMany(users);
       // Product.insertMany(products);
@@ -75,3 +75,5 @@ mongoose
   .catch((err) => {
     console.log(err);
   });
+
+module.exports = app;
