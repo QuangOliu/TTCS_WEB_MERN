@@ -60,6 +60,8 @@ app.use("/user", userRoutes);
 app.use("/product", productRoutes);
 app.use("/order", orderRoute);
 // DATA BASE CONNECT
+
+mongoose.set('strictQuery', false);
 mongoose
   .connect(process.env.MONGO_URL)
   // .connect("mongodb://localhost:27017/social-media")
