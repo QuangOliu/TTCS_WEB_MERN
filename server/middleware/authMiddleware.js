@@ -40,6 +40,11 @@ const checkAdmin = (req, res, next) => {
     next();
   } catch (error) {}
 };
+
+const checkCopyright = (req, res, next) => {
+  try {
+  } catch (error) {}
+};
 module.exports = {
   verifyToken,
   checkAdmin,

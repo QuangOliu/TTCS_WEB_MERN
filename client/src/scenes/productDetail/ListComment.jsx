@@ -58,7 +58,7 @@ export default function ListComment({ comments }) {
               <Box key={index}>
                 <ListItem alignItems='flex-start'>
                   <ListItemAvatar>
-                    <Avatar alt={thisUser?.firstName || "User"} src={`https://server-ttcs.onrender.com/assets/${thisUser?.picturePath}`} />
+                    <Avatar alt={thisUser?.firstName || "User"} src={`${process.env.REACT_APP_BASE_URL}assets/${thisUser?.picturePath}`} />
                   </ListItemAvatar>
                   <ListItemText
                     primary={thisUser ? `${thisUser?.firstName} ${thisUser?.lastName}` : "User"}

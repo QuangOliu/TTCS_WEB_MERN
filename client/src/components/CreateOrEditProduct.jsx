@@ -87,17 +87,6 @@ export default function CreateOrEditProduct({ productId }) {
         .updateProduct(productId, values)
         .then((result) => {
           console.log(result);
-          // setInitialValues((prevValues) => ({
-          //   ...prevValues,
-          //   name: result.data.name,
-          //   category: result.data.category,
-          //   shortDescription: result.data.shortDescription,
-          //   longDescription: result.data.longDescription,
-          //   quantity: result.data.quantity,
-          //   price: result.data.price,
-          //   images: result.data.images,
-          //   productImages: result.data.images,
-          // }));
           setOpen(true);
           onSubmitProps.resetForm();
           dispatch(setItem(result.data));
@@ -151,9 +140,6 @@ export default function CreateOrEditProduct({ productId }) {
           handleSubmit,
           setFieldValue,
           dirty,
-          setValues,
-          resetForm,
-          isSubmitting,
           /* and other goodies */
         }) => {
           return (

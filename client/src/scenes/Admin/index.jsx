@@ -1,7 +1,6 @@
 import { Box, Typography } from "@mui/material";
 import orderApi from "api/orderApi";
 import MyBarChart from "components/MyBarChart";
-import MyLineChart from "components/MyLineChart";
 import { useEffect, useState } from "react";
 // import productApi from '../'
 

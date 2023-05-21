@@ -1,5 +1,5 @@
 const User = require("../models/User");
-
+const bcrypt = require("bcrypt");
 //READ USER
 const getUser = async (req, res) => {
   try {
@@ -42,6 +42,7 @@ const getAllUser = async (req, res) => {
     res.status(500).json(error);
   }
 };
+
 const getListUser = (req, res) => {
   try {
     const { uniqueUserIds } = req.body;
@@ -56,7 +57,6 @@ const getListUser = (req, res) => {
       .catch((err) => {});
   } catch (error) {}
 };
-
 
 const deleteUsers = async (req, res) => {
   try {
@@ -85,11 +85,81 @@ const deleteUsers = async (req, res) => {
     });
   }
 };
+const updateAccount = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    let { firstName, lastName, email, password } = req.body;
 
+    const editAble = req.params.userId === req.user._id || req.user.role === "admin";
+
+    if (editAble) {
+      const salt = await bcrypt.genSalt();
+      const passwordHash = await bcrypt.hash(password, salt);
+
+      // Cập nhật thông tin người dùng trong database
+      User.findByIdAndUpdate(userId, { firstName, lastName, email, password: passwordHash }, { new: true })
+        .then((result) => {
+          return res.json({
+            data: result,
+            message: "Cập nhật thành công",
+            status: "true",
+          });
+        })
+        .catch((err) => {
+          return res.json({
+            data: "",
+            message: "Cập nhật thất bại",
+            status: "false",
+          });
+        });
+    } else {
+      return res.json({
+        data: "",
+        message: "Cập nhật thất bại",
+        status: "false",
+      });
+    }
+  } catch (error) {
+    // Xử lý lỗi
+    return res.json({
+      data: "",
+      message: "Cập nhật thất bại",
+      status: "false",
+    });
+  }
+};
+const updateRole = (req, res) => {
+  try {
+    const { userId, role } = req.body;
+    User.findByIdAndUpdate(userId, { role }, { new: true })
+      .then((result) => {
+        return res.json({
+          data: result,
+          message: "Cập nhật thành công",
+          status: "true",
+        });
+      })
+      .catch((err) => {
+        return res.json({
+          data: "",
+          message: "Cập nhật thất bại",
+          status: "false",
+        });
+      });
+  } catch (error) {
+    return res.json({
+      data: "",
+      message: "Cập nhật thất bại",
+      status: "false",
+    });
+  }
+};
 module.exports = {
   getUser,
   getAllUser,
   updateCart,
   getListUser,
-  deleteUsers
+  deleteUsers,
+  updateAccount,
+  updateRole,
 };

@@ -4,19 +4,19 @@ import EmailIcon from "@mui/icons-material/Email";
 import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import InboxIcon from "@mui/icons-material/MoveToInbox";
 import SendIcon from "@mui/icons-material/Send";
-import { Badge, Box, Divider, List, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Typography, useTheme } from "@mui/material";
-import orderApi from "api/orderApi";
+import { Badge, Box, Divider, IconButton, List, ListItemButton, ListItemIcon, ListItemText, ListSubheader, Tooltip, Typography, useTheme } from "@mui/material";
 import userApi from "api/userApi";
 import FlexBetween from "components/FlexBetween";
 import UserImage from "components/UserImage";
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-const UserWidget = ({ userId, picturePath, selectedIndex, setSelectedIndex, orders }) => {
+const UserWidget = ({ userId, picturePath, selectedIndex, setSelectedIndex, orders, setPageType, pageType }) => {
   const [user, setUser] = useState(null);
   const [ordersByStatus, setOrdersByStatus] = useState([]);
   const { palette } = useTheme();
   const navigate = useNavigate();
+
   const dark = palette.neutral.dark;
   const main = palette.neutral.main;
 
@@ -49,6 +49,7 @@ const UserWidget = ({ userId, picturePath, selectedIndex, setSelectedIndex, orde
   }
 
   const handleListItemClick = (event, index) => {
+    setPageType("order");
     setSelectedIndex(index);
   };
 
@@ -75,7 +76,17 @@ const UserWidget = ({ userId, picturePath, selectedIndex, setSelectedIndex, orde
             </Typography>
           </Box>
         </FlexBetween>
-        <ManageAccountsOutlined />
+        <Tooltip title={"Edit Account"}>
+          <IconButton
+            onClick={() => {
+              if (pageType === "edit") {
+                setPageType("order");
+              } else setPageType("edit");
+            }}
+          >
+            <ManageAccountsOutlined />
+          </IconButton>
+        </Tooltip>
       </FlexBetween>
 
       <Divider />

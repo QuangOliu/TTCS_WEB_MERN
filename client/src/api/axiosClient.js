@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const axiosClient = axios.create({
-  baseURL: 'https://server-ttcs.onrender.com/',
+  baseURL: `${process.env.REACT_APP_BASE_URL}`,
   headers: {
     'Content-Type': 'application/json',
   },

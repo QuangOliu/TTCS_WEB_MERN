@@ -69,7 +69,7 @@ export default function Form() {
       formData.append(value, values[value]);
     }
 
-    const savedUserResponse = await fetch("https://server-ttcs.onrender.com/auth/register", {
+    const savedUserResponse = await fetch(`${process.env.REACT_APP_BASE_URL}auth/register`, {
       method: "POST",
       body: formData,
     });

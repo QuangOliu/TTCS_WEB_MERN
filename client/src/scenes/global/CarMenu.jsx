@@ -46,7 +46,7 @@ const CartMenu = () => {
                 <Box key={`${item._id}`}>
                   <FlexBetween p='15px 0'>
                     <Box flex='1 1 40%'>
-                      <img alt={item?.name} width='123px' height='164px' src={`https://server-ttcs.onrender.com/assets/${item.images[0]}`} />
+                      <img alt={item?.name} width='123px' height='164px' src={`${process.env.REACT_APP_BASE_URL}assets/${item.images[0]}`} />
                     </Box>
                     <Box flex='1 1 60%'>
                       <FlexBetween mb='5px'>

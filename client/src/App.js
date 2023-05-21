@@ -23,6 +23,7 @@ import SearchPage from "scenes/searchPage";
 import { themeSettings } from "./theme";
 import ManageUser from "scenes/Admin/ManageUser";
 import EditProfile from "scenes/EditProfile";
+import RegisterForm from "scenes/loginPage/RegisterForm";
 
 function App() {
   const mode = useSelector((state) => state.mode);
@@ -62,10 +63,10 @@ function App() {
               <Route path='/checkout' element={<Checkout />} />
               <Route path='/search' element={<SearchPage />} />
               <Route path='/products/:productId' element=<ProductDetail /> />
-              
+
               <Route path='/orders'>
-                    <Route path=':orderId' element={<OrderDetail />} />
-                  </Route>
+                <Route path=':orderId' element={<OrderDetail />} />
+              </Route>
               {isAdmin && (
                 <Route path='/manage'>
                   <Route path='orders'>
@@ -80,7 +81,7 @@ function App() {
                   </Route>
 
                   <Route path='users'>
-                    <Route path='create' element={<LoginPage />} />
+                    <Route path='create' element={<RegisterForm />} />
                     <Route index element={<ManageUser />} />
                   </Route>
 

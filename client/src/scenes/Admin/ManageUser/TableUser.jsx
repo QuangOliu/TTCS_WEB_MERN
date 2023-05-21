@@ -2,15 +2,35 @@ import { useTheme } from "@emotion/react";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import FilterListIcon from "@mui/icons-material/FilterList";
-import { Box, Button, Checkbox, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, IconButton, Toolbar, Tooltip, Typography, alpha } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  FormControl,
+  IconButton,
+  InputLabel,
+  MenuItem,
+  Select,
+  Toolbar,
+  Tooltip,
+  Typography,
+  alpha,
+} from "@mui/material";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import userApi from "api/userApi";
 import StyledTableCell from "components/StyledTableCell";
 import StyledTableRow from "components/StyledTableRow";
 import { useState } from "react";
+import { useSelector } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 
 const head = [
@@ -51,27 +71,47 @@ const head = [
     id: "createdAt",
   },
 ];
+
+const roles = [
+  {
+    _id: 1,
+    name: "admin",
+    label: "Admin",
+  },
+  {
+    _id: 2,
+    name: "user",
+    label: "User",
+  },
+];
+
 function TableUsers({ data, btn, submitDelete }) {
   const [selected, setSelected] = useState([]);
-  const [selectedOne, setSelectedOne] = useState();
   const [open, setOpen] = useState(false);
+  const [selectedRoles, setSelectedRoles] = useState({});
+  const [selectedOne, setSelectedOne] = useState();
+  const [actionAllIn, setActionAllIn] = useState(false);
+
+  const user = useSelector((state) => state.user);
+  const isAdmin = user?.role === "admin";
 
   const navigate = useNavigate();
+  // Bên ngoài hàm TableUsers
 
   const theme = useTheme();
   const { palette } = useTheme();
 
   const handleSelectAllClick = (event) => {
     if (event.target.checked) {
+      if (selected.length > 0) {
+        return setSelected([]);
+      }
       const x = data.filter((n) => {
         return n.role !== "admin";
       });
       const newSelected = x.map((n) => n._id);
-      console.log({ newSelected });
       setSelected(newSelected);
-      return;
     }
-    setSelected([]);
   };
 
   const handleClick = (event, name) => {
@@ -94,7 +134,6 @@ function TableUsers({ data, btn, submitDelete }) {
   const isSelected = (name) => selected.indexOf(name) !== -1;
 
   const handleClickDeleteIcon = (selected) => {
-    console.log(selected);
     submitDelete(selected);
   };
 
@@ -104,6 +143,28 @@ function TableUsers({ data, btn, submitDelete }) {
 
   const handleClose = () => {
     setOpen(false);
+    setTimeout(() => {
+      setActionAllIn(false);
+      setSelectedOne();
+    }, 250);
+  };
+
+  // Trong hàm TableUsers
+  const handleChangeRole = (event, userId) => {
+    const role = event.target.value;
+    setSelectedRoles((prevSelectedRoles) => ({
+      ...prevSelectedRoles,
+      role: role,
+      userId: userId,
+      [userId]: role,
+    }));
+
+    userApi
+      .updateRole(userId, { userId, role })
+      .then((result) => {
+        console.log({ result });
+      })
+      .catch((err) => {});
   };
 
   return (
@@ -131,7 +192,12 @@ function TableUsers({ data, btn, submitDelete }) {
 
             {selected.length > 0 ? (
               <Tooltip title='Delete'>
-                <IconButton onClick={() => handleClickDeleteIcon(selected)}>
+                <IconButton
+                  onClick={() => {
+                    setActionAllIn(true);
+                    handleClickOpen();
+                  }}
+                >
                   <DeleteIcon />
                 </IconButton>
               </Tooltip>
@@ -208,7 +274,31 @@ function TableUsers({ data, btn, submitDelete }) {
                       <StyledTableCell align='left'>{row?.firstName.length > 50 ? `${row?.firstName.slice(0, 50)}...v.v` : row?.firstName}</StyledTableCell>
                       <StyledTableCell align='left'>{row?.lastName.length > 50 ? `${row?.lastName.slice(0, 50)}...v.v` : row?.lastName}</StyledTableCell>
                       <StyledTableCell align='left'>{row?.email.length > 50 ? `${row?.email.slice(0, 50)}...v.v` : row?.email}</StyledTableCell>
-                      <StyledTableCell align='left'>{row?.role.length > 50 ? `${row?.role.slice(0, 50)}...v.v` : row?.role}</StyledTableCell>
+                      {isAdmin ? (
+                        <StyledTableCell align='left'>
+                          <FormControl sx={{ minWidth: "100px" }} disabled={row.email === process.env.REACT_APP_EMAIL_AMIN}>
+                            <InputLabel id='demo-simple-select-helper-label'>Role</InputLabel>
+                            <Select
+                              labelId='demo-simple-select-helper-label'
+                              id='demo-simple-select-helper'
+                              // value={row?.role}
+                              value={selectedRoles[row?._id] || row?.role}
+                              label='Role'
+                              name='role'
+                              onChange={(event) => handleChangeRole(event, row?._id)}
+                            >
+                              {roles.map((role) => (
+                                <MenuItem key={role._id} value={role.name}>
+                                  {role.label}
+                                </MenuItem>
+                              ))}
+                            </Select>
+                          </FormControl>
+                        </StyledTableCell>
+                      ) : (
+                        <StyledTableCell align='left'>{row?.role.length > 50 ? `${row?.role.slice(0, 50)}...v.v` : row?.role}</StyledTableCell>
+                      )}
+
                       <StyledTableCell align='left'>{row.createdAt.slice(0, 10)}</StyledTableCell>
                       <StyledTableCell align='left'>
                         <IconButton
@@ -307,8 +397,13 @@ function TableUsers({ data, btn, submitDelete }) {
             aria-label='delete'
             size='large'
             onClick={() => {
-              // handleClickDeleteIcon([row._id]);
-              handleClickDeleteIcon([selectedOne]);
+              var x;
+              if (actionAllIn) x = selected;
+              else {
+                x = [selectedOne];
+              }
+
+              handleClickDeleteIcon(x);
               handleClose();
             }}
             autoFocus
