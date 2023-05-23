@@ -30,7 +30,7 @@ function ManageDashboad() {
       <Typography variant='h3' textAlign='left' sx={{ m: "50px 0" }}>
         <b>Thống kê doanh số của cửa hàng</b>
       </Typography>
-      <Box>
+      <Box sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center" }}>
         <MyBarChart data={data} />
       </Box>
     </Box>

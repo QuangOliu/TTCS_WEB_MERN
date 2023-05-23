@@ -4,7 +4,7 @@ import { Bar, BarChart, CartesianGrid, Legend, Tooltip, XAxis, YAxis } from "rec
 function MyBarChart({data}) {
   return (
     <div>
-      <BarChart width={730} height={250} data={data}>
+      <BarChart width={1000} height={500} data={data}>
         <CartesianGrid strokeDasharray='3 3' />
         <XAxis dataKey='name' />
         <YAxis />
